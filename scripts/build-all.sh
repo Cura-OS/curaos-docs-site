@@ -19,7 +19,7 @@ API_STAGE="${REPO_ROOT}/.build-workspace/api"
 if [[ -n "$API_ENTRY" ]]; then
   bash "${REPO_ROOT}/scripts/build-api-docs.sh" --entry "$API_ENTRY" --out "${API_OUT:-$API_STAGE}"
 else
-  bash "${REPO_ROOT}/scripts/build-api-docs.sh" --out "$API_STAGE"
+  bash "${REPO_ROOT}/scripts/build-api-docs.sh" --out "${API_OUT:-$API_STAGE}"
 fi
 
 log "B — external static site (MkDocs Material, offline)"

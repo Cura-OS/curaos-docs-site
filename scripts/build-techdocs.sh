@@ -81,8 +81,8 @@ techdocs_core_present() {
   have python3 && python3 -c "import importlib.util,sys; sys.exit(0 if importlib.util.find_spec('mkdocs_techdocs_core') else 1)" >/dev/null 2>&1
 }
 
-if have npx && techdocs_core_present && npx --yes @techdocs/cli@1.9.0 --version >/dev/null 2>&1; then
-  ( cd "$WS" && npx --yes @techdocs/cli@1.9.0 generate --source-dir . --output-dir "$OUT_DIR" --no-docker )
+if have npx && techdocs_core_present && npx --yes @techdocs/cli@1.10.7 --version >/dev/null 2>&1; then
+  ( cd "$WS" && npx --yes @techdocs/cli@1.10.7 generate --source-dir . --output-dir "$OUT_DIR" --no-docker )
   info "generated via @techdocs/cli (techdocs-core present)"
 elif have mkdocs; then
   ( cd "$WS" && mkdocs build --strict --site-dir "$OUT_DIR" )

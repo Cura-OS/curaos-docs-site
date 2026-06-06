@@ -1,0 +1,4 @@
+# Python toolchain for the MkDocs Material external/offline docs build.
+# Exact pins per the CuraOS version-pinning policy; Renovate keeps them fresh.
+mkdocs==1.6.1
+mkdocs-material==9.7.6

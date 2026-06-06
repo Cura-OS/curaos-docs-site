@@ -1,0 +1,85 @@
+# MkDocs Material — CuraOS external / customer-facing / offline / air-gap docs.
+#
+# Source of truth for authored content lives in the workspace mirror
+# (ai/curaos/curaos-docs-site/docs-content/) per the repo-boundary rule; this
+# repo holds build config + scripts only. `scripts/build-external.sh` stages the
+# authored Markdown + generated TypeDoc API Markdown into `.build-workspace/docs`
+# (the docs_dir below) before invoking `mkdocs build --strict`.
+#
+# Browser-side search = the stock Material `search` plugin (lunr.js, client-side).
+# Air-gap zero-egress is achieved by `theme.font: false` (no Google Fonts CDN) +
+# serving the static output over HTTP via NGINX in the Zarf bundle. The site
+# emits no remote <script>/<link> references — proven by scripts/offline-smoke.sh.
+
+site_name: CuraOS Documentation
+site_description: >-
+  CuraOS — composable, self-hosted-first care platform. Customer + operator
+  documentation: install guides, integration, API reference, runbooks.
+site_url: ""
+use_directory_urls: true
+docs_dir: .build-workspace/docs
+site_dir: site
+strict: true
+
+theme:
+  name: material
+  language: en
+  # Self-host nothing from Google Fonts — air-gap installs have no CDN egress.
+  # `font: false` makes Material use the system font stack and emit zero remote
+  # <link>/<script> font references. The site is served over HTTP by NGINX (in
+  # the Zarf air-gap bundle), so no file:// `offline` shim is needed.
+  font: false
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  # Client-side lunr.js search index — works fully offline when the static
+  # output is served over HTTP (NGINX/K8s/Zarf air-gap). No network egress.
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+# Navigation is intentionally minimal here; build-external.sh can extend nav from
+# the staged content tree. Keep top-level entries stable for deep links.
+nav:
+  - Home: index.md
+  - Install: install/index.md
+  - Integration: integration/index.md
+  - Operator runbooks: operations/index.md
+  - API reference: api/index.md
+
+extra:
+  generator: false

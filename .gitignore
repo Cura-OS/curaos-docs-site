@@ -1,0 +1,8 @@
+node_modules/
+site/
+techdocs-site/
+.build-workspace/
+.cache/
+*.log
+.DS_Store
+.venv/

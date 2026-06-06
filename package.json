@@ -1,0 +1,27 @@
+{
+  "name": "curaos-docs-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CuraOS documentation site: MkDocs Material (external/offline/air-gap) + Backstage TechDocs (internal) + TypeDoc API docs",
+  "type": "module",
+  "engines": {
+    "bun": ">=1.1.0",
+    "node": ">=22.0.0"
+  },
+  "packageManager": "bun@1.1.42",
+  "scripts": {
+    "ci": "bash ci.sh",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "build:external": "bash scripts/build-external.sh",
+    "build:techdocs": "bash scripts/build-techdocs.sh",
+    "build:api": "bash scripts/build-api-docs.sh",
+    "build": "bash scripts/build-all.sh"
+  },
+  "devDependencies": {
+    "@types/bun": "1.1.14",
+    "typedoc": "0.28.19",
+    "typedoc-plugin-markdown": "4.12.0",
+    "typescript": "5.7.2"
+  }
+}

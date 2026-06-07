@@ -61,18 +61,14 @@ step "8 em/en dash gate (no U+2014 em-dash / U+2013 en-dash in authored content)
 # Per the no-em-dash rule: authored docs content must contain zero em/en dashes.
 # Scope = the in-repo examples/content fixture + the staged .build-workspace/docs
 # (the real authored content from the mirror, present only when step 6 built it).
-# grep -P needs PCRE; GNU grep and ugrep have it. Hard-fail on any match.
+# Delegated to scripts/em-dash-gate.sh: fail-closed + host-portable (PCRE grep
+# when available, else an LC_ALL=C byte scan), and it scans whole text trees
+# with -I so no extension (.yml, .yaml, ...) can bypass the rule.
 DASH_TARGETS=(examples/content)
 if [[ "$MKDOCS_OK" -eq 1 && -d .build-workspace/docs ]]; then
   DASH_TARGETS+=(.build-workspace/docs)
 fi
-if grep -rIlP '[\x{2014}\x{2013}]' \
-     --include='*.md' --include='*.json' --include='*.ts' --include='*.yml' \
-     "${DASH_TARGETS[@]}" 2>/dev/null; then
-  printf 'FAIL: em-dash or en-dash found in the files above; use - , ; : or ()\n' >&2
-  exit 1
-fi
-printf '  no em/en dashes in: %s\n' "${DASH_TARGETS[*]}"
+bash scripts/em-dash-gate.sh "${DASH_TARGETS[@]}"
 
 step "9 TechDocs harness (per-service)"
 if command -v mkdocs >/dev/null 2>&1 || command -v npx >/dev/null 2>&1; then

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ci.sh — local CI gate for curaos-docs-site (default merge gate).
+# ci.sh: local CI gate for curaos-docs-site (default merge gate).
 #
 # A green run here is the merge authority (GitHub auto-CI is workflow_dispatch-
 # only). Mirrors the step order a reactivated GitHub Actions run would use.
@@ -10,11 +10,12 @@
 #   3 pin-guard (SHA-pin actions + digest-pin images + exact python pins)
 #   4 typecheck (tsc)
 #   5 API docs (TypeDoc → Markdown, in-repo fixture)
-#   6 external static site (MkDocs Material strict) — skipped-with-notice if
+#   6 external static site (MkDocs Material strict): skipped-with-notice if
 #     mkdocs absent (the offline smoke + bun tests still cover behaviour)
 #   7 offline smoke (zero-egress static render + offline search) when site built
-#   8 TechDocs harness (per-service) — skipped-with-notice if mkdocs absent
-#   9 bun test (unit + contract)
+#   8 em/en dash gate (no U+2014 / U+2013 in authored docs content)
+#   9 TechDocs harness (per-service): skipped-with-notice if mkdocs absent
+#  10 bun test (unit + contract)
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
@@ -29,7 +30,7 @@ step "2 shellcheck (scripts + ci.sh)"
 if command -v shellcheck >/dev/null 2>&1; then
   shellcheck -S warning ci.sh scripts/*.sh
 else
-  printf 'SKIP: shellcheck — not installed (bun test still covers script behaviour)\n'
+  printf 'SKIP: shellcheck, not installed (bun test still covers script behaviour)\n'
 fi
 
 step "3 pin-guard"
@@ -46,24 +47,41 @@ if command -v mkdocs >/dev/null 2>&1; then
   bash scripts/build-external.sh --api-dir .build-workspace/api
   MKDOCS_OK=1
 else
-  printf 'SKIP: mkdocs — not installed (run: pip install -r requirements.txt)\n'
+  printf 'SKIP: mkdocs, not installed (run: pip install -r requirements.txt)\n'
 fi
 
 step "7 offline smoke (zero-egress + offline search)"
 if [[ "$MKDOCS_OK" -eq 1 ]]; then
   bash scripts/offline-smoke.sh
 else
-  printf 'SKIP: offline smoke — depends on the MkDocs build (step 6 skipped)\n'
+  printf 'SKIP: offline smoke, depends on the MkDocs build (step 6 skipped)\n'
 fi
 
-step "8 TechDocs harness (per-service)"
+step "8 em/en dash gate (no U+2014 em-dash / U+2013 en-dash in authored content)"
+# Per the no-em-dash rule: authored docs content must contain zero em/en dashes.
+# Scope = the in-repo examples/content fixture + the staged .build-workspace/docs
+# (the real authored content from the mirror, present only when step 6 built it).
+# grep -P needs PCRE; GNU grep and ugrep have it. Hard-fail on any match.
+DASH_TARGETS=(examples/content)
+if [[ "$MKDOCS_OK" -eq 1 && -d .build-workspace/docs ]]; then
+  DASH_TARGETS+=(.build-workspace/docs)
+fi
+if grep -rIlP '[\x{2014}\x{2013}]' \
+     --include='*.md' --include='*.json' --include='*.ts' --include='*.yml' \
+     "${DASH_TARGETS[@]}" 2>/dev/null; then
+  printf 'FAIL: em-dash or en-dash found in the files above; use - , ; : or ()\n' >&2
+  exit 1
+fi
+printf '  no em/en dashes in: %s\n' "${DASH_TARGETS[*]}"
+
+step "9 TechDocs harness (per-service)"
 if command -v mkdocs >/dev/null 2>&1 || command -v npx >/dev/null 2>&1; then
   bash scripts/build-techdocs.sh
 else
-  printf 'SKIP: TechDocs — neither mkdocs nor npx available\n'
+  printf 'SKIP: TechDocs, neither mkdocs nor npx available\n'
 fi
 
-step "9 bun test (unit + contract)"
+step "10 bun test (unit + contract)"
 bun test
 
 printf '\nlocal CI gate: PASS\n'

@@ -1,4 +1,4 @@
-# pages.yml — publish the external docs site to GitHub Pages (SECONDARY mirror).
+# pages.yml: publish the external docs site to GitHub Pages (SECONDARY mirror).
 #
 # GitHub Pages is the secondary public mirror per ADR-0110 §3.15. The primary
 # deploy targets are NGINX/K8s (cloud/on-prem/hybrid) and the Zarf bundle

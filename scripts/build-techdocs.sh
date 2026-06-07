@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build-techdocs.sh — generate a Backstage-TechDocs-compatible build for one
+# build-techdocs.sh: generate a Backstage-TechDocs-compatible build for one
 # service entity from its mirror Markdown.
 #
 # S4 ships the build HARNESS, not a Backstage runtime deploy and not per-repo
@@ -44,7 +44,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: ${SERVICE}
-  description: CuraOS ${SERVICE} — generated TechDocs entity (build-time, not committed to the service repo).
+  description: CuraOS ${SERVICE} generated TechDocs entity (build-time, not committed to the service repo).
   annotations:
     backstage.io/techdocs-ref: dir:.
 spec:
@@ -54,7 +54,7 @@ spec:
 YAML
 
 cat > "${WS}/mkdocs.yml" <<YAML
-site_name: ${SERVICE} — CuraOS TechDocs
+site_name: ${SERVICE} - CuraOS TechDocs
 docs_dir: docs
 strict: true
 theme:
@@ -75,7 +75,7 @@ mkdir -p "$(dirname "$OUT_DIR")"
 # config; that plugin (pip `mkdocs-techdocs-core`) must be installed for it to
 # succeed. Use the cli ONLY when that plugin is present (the Backstage publish
 # path). Otherwise fall back to a plain `mkdocs build` of the search-only config
-# synthesized above — an equivalent render that exercises the harness in the
+# synthesized above, an equivalent render that exercises the harness in the
 # local gate without the heavier Backstage toolchain. Never `|| true`.
 techdocs_core_present() {
   have python3 && python3 -c "import importlib.util,sys; sys.exit(0 if importlib.util.find_spec('mkdocs_techdocs_core') else 1)" >/dev/null 2>&1
@@ -86,7 +86,7 @@ if have npx && techdocs_core_present && npx --yes @techdocs/cli@1.10.7 --version
   info "generated via @techdocs/cli (techdocs-core present)"
 elif have mkdocs; then
   ( cd "$WS" && mkdocs build --strict --site-dir "$OUT_DIR" )
-  info "generated via mkdocs (techdocs-core absent — equivalent search-only render)"
+  info "generated via mkdocs (techdocs-core absent, equivalent search-only render)"
 else
   die "neither a techdocs-core-enabled @techdocs/cli nor mkdocs is available"
 fi

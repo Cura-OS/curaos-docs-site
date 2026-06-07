@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# pin-guard.sh — static supply-chain guard for curaos-docs-site.
+# pin-guard.sh: static supply-chain guard for curaos-docs-site.
 #
 # Fails when a GitHub Action is not SHA-pinned, a base image is not digest-pinned,
 # or a Python/Node dependency uses a floating range. Mirrors the version-pinning

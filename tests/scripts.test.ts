@@ -10,7 +10,7 @@ function sh(script: string, args: string[] = []) {
   return spawnSync("bash", [join(ROOT, script), ...args], { cwd: ROOT, encoding: "utf8" });
 }
 
-describe("scripts/lib.sh — flag + content-dir resolution", () => {
+describe("scripts/lib.sh - flag + content-dir resolution", () => {
   test("parse_flag reads --name VALUE and --name=VALUE", () => {
     const r = spawnSync(
       "bash",
@@ -43,7 +43,7 @@ describe("scripts/lib.sh — flag + content-dir resolution", () => {
   });
 });
 
-describe("scripts/pin-guard.sh — supply-chain pins", () => {
+describe("scripts/pin-guard.sh - supply-chain pins", () => {
   test("passes on the committed tree (actions SHA-pinned, image digest-pinned, python ==)", () => {
     const r = sh("scripts/pin-guard.sh");
     expect(r.stdout + r.stderr).toContain("pin-guard: PASS");
@@ -51,7 +51,7 @@ describe("scripts/pin-guard.sh — supply-chain pins", () => {
   });
 });
 
-describe("hosting — air-gap invariants", () => {
+describe("hosting - air-gap invariants", () => {
   test("nginx Dockerfile base image is digest-pinned", () => {
     const df = readFileSync(join(ROOT, "hosting/nginx/Dockerfile"), "utf8");
     expect(df).toMatch(/FROM nginx:[^@]+@sha256:[0-9a-f]{64}/);
@@ -75,7 +75,7 @@ describe("hosting — air-gap invariants", () => {
   });
 });
 
-describe("scripts/build-all.sh — --api-out is honored without --api-entry", () => {
+describe("scripts/build-all.sh - --api-out is honored without --api-entry", () => {
   // Regression for the path-mismatch bug: the else branch (no --api-entry) used
   // to hardcode the API stage dir, ignoring --api-out, while the external build
   // was pointed at --api-out → the builder couldn't find the API docs. Both the
@@ -123,7 +123,7 @@ describe("scripts/build-all.sh — --api-out is honored without --api-entry", ()
   });
 });
 
-describe("scripts/build-api-docs.sh — TypeDoc Markdown emit (in-repo fixture)", () => {
+describe("scripts/build-api-docs.sh - TypeDoc Markdown emit (in-repo fixture)", () => {
   test("emits a Markdown index for the fixture package", () => {
     // Requires `bun install` to have populated node_modules/.bin/typedoc.
     if (!existsSync(join(ROOT, "node_modules/.bin/typedoc"))) {
@@ -143,7 +143,7 @@ describe("scripts/build-api-docs.sh — TypeDoc Markdown emit (in-repo fixture)"
   });
 });
 
-describe("scripts/offline-smoke.sh — rejects remote-CDN output", () => {
+describe("scripts/offline-smoke.sh - rejects remote-CDN output", () => {
   test("fails when index.html references a remote CDN asset", () => {
     const site = mkdtempSync(join(tmpdir(), "site-"));
     try {

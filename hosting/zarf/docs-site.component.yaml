@@ -7,7 +7,7 @@
 components:
   - name: curaos-docs-site
     required: false
-    description: "CuraOS external documentation site — offline MkDocs Material static served by NGINX. Zero-egress."
+    description: "CuraOS external documentation site: offline MkDocs Material static served by NGINX. Zero-egress."
     manifests:
       - name: curaos-docs-site
         files:

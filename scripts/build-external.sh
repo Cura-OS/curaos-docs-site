@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# build-external.sh — build the MkDocs Material external/offline static site.
+# build-external.sh: build the MkDocs Material external/offline static site.
 #
 # Stages authored Markdown (from --content-dir, the workspace mirror source of
 # truth) + optional generated API Markdown (--api-dir) into the build workspace,
 # then runs `mkdocs build --strict`. The output (site/) is a self-contained
-# offline static site with client-side search — hostable behind NGINX/K8s, on
+# offline static site with client-side search, hostable behind NGINX/K8s, on
 # GitHub Pages (secondary mirror), or shipped inside a Zarf bundle (air-gap).
 #
 # Usage:
@@ -33,7 +33,7 @@ fi
 for sub in install integration operations api; do
   if [[ ! -f "${WORKSPACE}/${sub}/index.md" ]]; then
     mkdir -p "${WORKSPACE}/${sub}"
-    printf '# %s\n\n_Section placeholder — populate from the docs-content mirror._\n' \
+    printf '# %s\n\n_Section placeholder: populate from the docs-content mirror._\n' \
       "$(printf '%s' "$sub" | tr '[:lower:]' '[:upper:]')" > "${WORKSPACE}/${sub}/index.md"
   fi
 done
@@ -43,7 +43,7 @@ log "2 mkdocs build --strict (Material, offline + client-side search)"
 if have mkdocs; then
   ( cd "$REPO_ROOT" && mkdocs build --strict --site-dir "$OUT_DIR" )
 else
-  die "mkdocs not installed — run: pip install -r requirements.txt"
+  die "mkdocs not installed, run: pip install -r requirements.txt"
 fi
 
 log "3 assert offline static output"
@@ -53,7 +53,7 @@ log "3 assert offline static output"
 if [[ -f "${OUT_DIR}/search/search_index.json" ]]; then
   info "client-side search index present: search/search_index.json"
 else
-  die "search index missing — browser-side search would not work offline"
+  die "search index missing, browser-side search would not work offline"
 fi
 info "external static site: $OUT_DIR"
 printf '\nbuild-external: PASS\n'

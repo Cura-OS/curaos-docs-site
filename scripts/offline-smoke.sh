@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# offline-smoke.sh — prove the built static site renders with ZERO network
+# offline-smoke.sh: prove the built static site renders with ZERO network
 # egress (air-gap acceptance) and that browser-side search is usable offline.
 #
 # This does NOT spin up a browser; it asserts the structural invariants that
@@ -26,7 +26,7 @@ log "1 index.html present + relative assets"
 if grep -Eo '<(script|link)[^>]+(src|href)="https?://[^"]+"' "${SITE}/index.html" >/tmp/_offline_cdn_hits 2>/dev/null; then
   if [[ -s /tmp/_offline_cdn_hits ]]; then
     cat /tmp/_offline_cdn_hits >&2
-    die "remote CDN asset references found in index.html — not air-gap safe"
+    die "remote CDN asset references found in index.html, not air-gap safe"
   fi
 fi
 info "no remote CDN asset references in index.html"
@@ -45,6 +45,6 @@ fi
 
 log "3 self-contained assets dir"
 [[ -d "${SITE}/assets" ]] || die "Material assets/ dir missing in $SITE"
-info "assets/ present — site is self-contained for offline/air-gap"
+info "assets/ present, site is self-contained for offline/air-gap"
 
 printf '\noffline-smoke: PASS (zero-egress static render + offline search OK)\n'

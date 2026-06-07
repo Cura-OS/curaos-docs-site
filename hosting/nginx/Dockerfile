@@ -1,7 +1,7 @@
 # NGINX static host for the CuraOS external docs site.
 #
 # The image bundles the pre-built MkDocs Material static output (site/) and
-# serves it with zero external egress — suitable for on-prem, hybrid, and
+# serves it with zero external egress, suitable for on-prem, hybrid, and
 # air-gap (Zarf) profiles. The base image is digest-pinned per the version-
 # pinning policy; Renovate keeps the digest fresh.
 #

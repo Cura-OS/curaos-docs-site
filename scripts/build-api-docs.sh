@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# build-api-docs.sh — generate TypeScript API docs as Markdown via TypeDoc.
+# build-api-docs.sh: generate TypeScript API docs as Markdown via TypeDoc.
 #
 # TypeDoc + typedoc-plugin-markdown emit Markdown API docs for a TypeScript
 # package's public entrypoint. Output is written to --out (the caller points this
 # at the workspace mirror `ai/curaos/<package>/docs/api/` so the docs join the
-# doc graph). This script intentionally takes paths as args — it never hardcodes
+# doc graph). This script intentionally takes paths as args; it never hardcodes
 # a workspace path (repo-boundary rule).
 #
 # Usage:
@@ -31,7 +31,7 @@ fi
 log "TypeDoc → Markdown ($NAME)"
 mkdir -p "$OUT_DIR"
 TYPEDOC_BIN="${REPO_ROOT}/node_modules/.bin/typedoc"
-[[ -x "$TYPEDOC_BIN" ]] || die "typedoc not installed — run: bun install"
+[[ -x "$TYPEDOC_BIN" ]] || die "typedoc not installed, run: bun install"
 
 ARGS=(
   --plugin typedoc-plugin-markdown

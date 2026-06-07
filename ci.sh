@@ -57,18 +57,16 @@ else
   printf 'SKIP: offline smoke, depends on the MkDocs build (step 6 skipped)\n'
 fi
 
-step "8 em/en dash gate (no U+2014 em-dash / U+2013 en-dash in authored content)"
-# Per the no-em-dash rule: authored docs content must contain zero em/en dashes.
-# Scope = the in-repo examples/content fixture + the staged .build-workspace/docs
-# (the real authored content from the mirror, present only when step 6 built it).
+step "8 em/en dash gate (no U+2014 em-dash / U+2013 en-dash anywhere in the repo)"
+# Per the no-em-dash rule: NO tracked text file anywhere in the repo may contain
+# an em/en dash. The gate now defaults to the WHOLE repo (every tracked text
+# file), excluding only build/gitignored output (node_modules, site,
+# techdocs-site, .build-workspace, .cache, .venv, .git). Invoked with no args so
+# any future dash in any source file fails this merge gate.
 # Delegated to scripts/em-dash-gate.sh: fail-closed + host-portable (PCRE grep
 # when available, else an LC_ALL=C byte scan), and it scans whole text trees
-# with -I so no extension (.yml, .yaml, ...) can bypass the rule.
-DASH_TARGETS=(examples/content)
-if [[ "$MKDOCS_OK" -eq 1 && -d .build-workspace/docs ]]; then
-  DASH_TARGETS+=(.build-workspace/docs)
-fi
-bash scripts/em-dash-gate.sh "${DASH_TARGETS[@]}"
+# with -I so no extension (.yml, .yaml, .sh, Dockerfile, ...) can bypass the rule.
+bash scripts/em-dash-gate.sh
 
 step "9 TechDocs harness (per-service)"
 if command -v mkdocs >/dev/null 2>&1 || command -v npx >/dev/null 2>&1; then

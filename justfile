@@ -1,4 +1,4 @@
-# curaos-docs-site — task runner.
+# curaos-docs-site task runner.
 # Local CI (`just ci`) is the default merge gate; GitHub Actions (Pages publish)
 # is workflow_dispatch-only.
 

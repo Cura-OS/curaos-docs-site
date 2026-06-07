@@ -4,10 +4,10 @@ Documentation build + hosting for CuraOS.
 
 Three surfaces from one Markdown source:
 
-- **External docs** — MkDocs Material standalone static site with browser-side
+- **External docs:** MkDocs Material standalone static site with browser-side
   search, renderable fully offline / air-gap.
-- **Internal TechDocs** — per-service Backstage-TechDocs-compatible build harness.
-- **API docs** — TypeScript API reference generated as Markdown via TypeDoc.
+- **Internal TechDocs:** per-service Backstage-TechDocs-compatible build harness.
+- **API docs:** TypeScript API reference generated as Markdown via TypeDoc.
 
 The build is **deliberate**: GitHub Actions (Pages publish) is
 `workflow_dispatch`-only. The local gate (`just ci`) is the merge authority for
@@ -53,7 +53,7 @@ just offline-smoke           # prove zero-egress static render + offline search
 
 - **Cloud / on-prem / hybrid:** `hosting/nginx` image + `hosting/k8s` manifests.
 - **Public mirror:** GitHub Pages (secondary), via `pages.yml` (dispatch-only).
-- **Air-gap:** `hosting/zarf` component input — the signed bundle host composes
+- **Air-gap:** `hosting/zarf` component input; the signed bundle host composes
   the digest-pinned NGINX docs image + manifests with zero external egress.
 
 ## Local gate

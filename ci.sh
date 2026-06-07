@@ -57,12 +57,15 @@ else
   printf 'SKIP: offline smoke, depends on the MkDocs build (step 6 skipped)\n'
 fi
 
-step "8 em/en dash gate (no U+2014 em-dash / U+2013 en-dash anywhere in the repo)"
-# Per the no-em-dash rule: NO tracked text file anywhere in the repo may contain
-# an em/en dash. The gate now defaults to the WHOLE repo (every tracked text
-# file), excluding only build/gitignored output (node_modules, site,
-# techdocs-site, .build-workspace, .cache, .venv, .git). Invoked with no args so
-# any future dash in any source file fails this merge gate.
+step "8 em/en dash gate (no U+2014 em-dash / U+2013 en-dash in repo OR staged docs)"
+# Per the no-em-dash rule: NO tracked text file anywhere in the repo, AND no
+# authored docs content staged for the build, may contain an em/en dash. The gate
+# (invoked with no args) defaults to BOTH the whole tracked repo (git ls-files)
+# AND the staged authored content under .build-workspace/{docs,techdocs} -- the
+# content build-external.sh / build-techdocs.sh resolve the docs into for MkDocs.
+# Only truly-generated output is excluded (node_modules, site, techdocs-site,
+# .build-workspace/cache, .venv, .git). Running AFTER steps 5-6 means the staged
+# content (incl. generated API Markdown) exists for the gate to scan.
 # Delegated to scripts/em-dash-gate.sh: fail-closed + host-portable (PCRE grep
 # when available, else an LC_ALL=C byte scan), and it scans whole text trees
 # with -I so no extension (.yml, .yaml, .sh, Dockerfile, ...) can bypass the rule.

@@ -15,10 +15,16 @@ CuraOS is in active development (pre-1.0), but it is not vaporware. A live
 deployment runs on self-hosted Kubernetes right now:
 
 - **19 frontend apps**, each reachable on its own subdomain (admin, builder,
-  fleet, front-office, the business suite, and the personal suite).
-- **51 backend services**: the neutral core plus the HealthStack overlay and
-  personal/business variants, fronted by an API gateway.
-- **OIDC single sign-on** through Pocket-ID (Authorization Code with PKCE).
+  fleet, front-office, the business suite, and the personal suite), on one
+  shared design system, with dark mode and right-to-left Arabic that persist
+  across reloads.
+- **Around 60 backend services** deployed: the neutral core plus the HealthStack
+  overlay and personal/business variants, fronted by an API gateway. A first
+  set (commerce, orders, fleet, calendar, donation, site, automation,
+  plugin-runtime) already serves real seeded data through live read endpoints;
+  the rest are scaffolded and filling in along the roadmap.
+- **OIDC single sign-on** through Pocket-ID (Authorization Code with PKCE),
+  brokered by the identity service into a CuraOS session.
 - **Self-hosted runtime**: Kubernetes (k3d), CNPG-managed PostgreSQL, Valkey,
   and an ingress controller, with the public edge fronted by Caddy and
   Cloudflare.

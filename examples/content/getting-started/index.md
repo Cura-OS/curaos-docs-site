@@ -34,23 +34,23 @@ apps require an account.
 | Admin | `https://admin.abualruz.com` | Tenant and platform administration |
 | Builder | `https://builder.abualruz.com` | App and site builder |
 | Front office | `https://front-office.abualruz.com` | Staff operations desk |
-| API gateway | `https://api.abualruz.com` | Entry point to the 51 backend services |
+| API gateway | `https://api.abualruz.com` | Entry point to around 60 backend services |
 | Sign in | `https://login.abualruz.com` | Shared OIDC sign-in surface |
 
 A full list of every app is in the [Apps guide](../apps/index.md).
 
-### Check the API is up
+### Reach the platform
 
-The API gateway routes to each service under a path prefix. Health endpoints are
-unauthenticated, so you can confirm the platform is reachable without a token:
+The API gateway routes to each service under a path prefix, and the apps reach it
+over the same host. The fastest confirmation that the platform is up is to open
+any app subdomain above and complete the OIDC sign-in: a successful redirect
+through Pocket-ID and back into a CuraOS session exercises the gateway, the
+identity broker, and the app together.
 
-```bash
-curl -i https://api.abualruz.com/identity/healthz
-# HTTP/2 200
-```
-
-See the [API reference](../api/index.md) for the service catalog and the path
-convention.
+A first set of services (commerce, orders, fleet, calendar, donation, site,
+automation, plugin-runtime) serves real seeded data through live read endpoints
+today; the rest are scaffolded. See the [API reference](../api/index.md) for the
+service catalog and the path convention.
 
 ## Choose your path
 

@@ -45,8 +45,11 @@ what a token may do.
 
 ## The service catalog
 
-The deployment runs 51 backend services: the neutral core, the HealthStack
-overlay, and personal/business variants. They group as follows.
+The deployment runs around 60 backend services: the neutral core, the HealthStack
+overlay, and personal/business variants. A first set (commerce, orders, fleet,
+calendar, donation, site, automation, plugin-runtime) serves real seeded data
+through live read endpoints today; the rest are scaffolded and filling in along
+the roadmap. They group as follows.
 
 ### Neutral core
 

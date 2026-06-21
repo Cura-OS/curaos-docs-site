@@ -2,8 +2,10 @@
 
 CuraOS ships 19 frontend apps. Every app is generated from the same workflow
 definitions and domain contracts, themed by one shared design system
-(`@curaos/ui`), and reachable on its own subdomain. Sign-in is OIDC through
-Pocket-ID; some apps require an account.
+(`@curaos/ui`), and reachable on its own subdomain. Dark mode and right-to-left
+Arabic are built in and persist across reloads. Sign-in is OIDC through
+Pocket-ID, brokered by the identity service into a CuraOS session; some apps
+require an account.
 
 The apps fall into three groups: the **Platform** apps for operating and
 building the system, the **Business suite** for running an organization, and the

@@ -1,20 +1,22 @@
 # MkDocs Material: CuraOS external / customer-facing / offline / air-gap docs.
 #
-# Source of truth for authored content lives in the workspace mirror
-# (ai/curaos/curaos-docs-site/docs-content/) per the repo-boundary rule; this
-# repo holds build config + scripts only. `scripts/build-external.sh` stages the
-# authored Markdown + generated TypeDoc API Markdown into `.build-workspace/docs`
-# (the docs_dir below) before invoking `mkdocs build --strict`.
+# Authored content lives in this repo under examples/content (the resolvable
+# default); scripts/build-external.sh stages it into .build-workspace/docs (the
+# docs_dir below) before invoking `mkdocs build --strict`. A synced copy lives in
+# the workspace mirror (ai/curaos/curaos-docs-site/docs-content/) for the doc
+# graph.
 #
 # Browser-side search = the stock Material `search` plugin (lunr.js, client-side).
 # Air-gap zero-egress is achieved by `theme.font: false` (no Google Fonts CDN) +
-# serving the static output over HTTP via NGINX in the Zarf bundle. The site
-# emits no remote <script>/<link> references, proven by scripts/offline-smoke.sh.
+# serving the static output over HTTP via NGINX/Caddy. The site emits no remote
+# <script>/<link> references, proven by scripts/offline-smoke.sh. The Aqua skin
+# (docs/stylesheets/extra.css) is bundled local CSS, not a remote stylesheet.
 
 site_name: CuraOS Documentation
 site_description: >-
-  CuraOS - composable, self-hosted-first care platform. Customer + operator
-  documentation: install guides, integration, API reference, runbooks.
+  CuraOS: composable, self-hosted-first care platform. Customer and operator
+  documentation: getting started, install, architecture, apps guide, API
+  reference, auth setup, integration, and runbooks.
 site_url: ""
 use_directory_urls: true
 docs_dir: .build-workspace/docs
@@ -26,19 +28,23 @@ theme:
   language: en
   # Self-host nothing from Google Fonts; air-gap installs have no CDN egress.
   # `font: false` makes Material use the system font stack and emit zero remote
-  # <link>/<script> font references. The site is served over HTTP by NGINX (in
-  # the Zarf air-gap bundle), so no file:// `offline` shim is needed.
+  # <link>/<script> font references. The Aqua palette is layered on top via
+  # extra_css (local file), so docs visually matches the @curaos/ui apps.
   font: false
   features:
     - navigation.instant
     - navigation.tracking
     - navigation.sections
     - navigation.top
+    - navigation.indexes
+    - toc.follow
     - search.suggest
     - search.highlight
     - content.code.copy
     - content.tabs.link
   palette:
+    # Named seed = teal (closest Material primitive to the Aqua brand); the
+    # exact @curaos/ui token values are applied by extra.css.
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: teal
@@ -54,9 +60,15 @@ theme:
         icon: material/weather-sunny
         name: Switch to light mode
 
+# Local stylesheet: maps Material's CSS variables onto the @curaos/ui "Aqua"
+# design tokens (ui-kit tokens.json) so the docs read like the live apps. Bundled
+# into the static output (no remote fetch), so air-gap + the strict CSP hold.
+extra_css:
+  - stylesheets/extra.css
+
 plugins:
   # Client-side lunr.js search index; works fully offline when the static
-  # output is served over HTTP (NGINX/K8s/Zarf air-gap). No network egress.
+  # output is served over HTTP (NGINX/Caddy/Zarf air-gap). No network egress.
   - search
 
 markdown_extensions:
@@ -64,22 +76,31 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - tables
+  - def_list
   - toc:
       permalink: true
   - pymdownx.highlight:
       anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.details
   - pymdownx.tabbed:
       alternate_style: true
 
-# Navigation is intentionally minimal here; build-external.sh can extend nav from
-# the staged content tree. Keep top-level entries stable for deep links.
+# Navigation. Every entry maps to a real authored page under examples/content.
+# Keep top-level entries stable for deep links.
 nav:
   - Home: index.md
-  - Install: install/index.md
-  - Integration: integration/index.md
-  - Operator runbooks: operations/index.md
+  - Getting started: getting-started/index.md
+  - Install (self-host): install/index.md
+  - Architecture: architecture/index.md
+  - Apps guide: apps/index.md
+  - Capabilities: capabilities/index.md
   - API reference: api/index.md
+  - Auth setup: auth/index.md
+  - Operations: operations/index.md
+  - Integration: integration/index.md
 
 extra:
   generator: false

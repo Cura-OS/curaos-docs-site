@@ -30,10 +30,13 @@ if [[ -n "$API_DIR" && -d "$API_DIR" ]]; then
 fi
 # Guarantee the nav anchors exist so --strict does not fail on a sparse content
 # dir (the in-repo fixture provides all of them; a real content dir may not).
-for sub in install integration operations api; do
+# Cover EVERY nav anchor (keep in sync with mkdocs.yml nav) so a sparse content
+# dir still satisfies --strict. The full docs-content mirror provides all of
+# these; a minimal fixture or partial mirror gets a placeholder per missing one.
+for sub in getting-started install architecture apps capabilities auth integration operations api; do
   if [[ ! -f "${WORKSPACE}/${sub}/index.md" ]]; then
     mkdir -p "${WORKSPACE}/${sub}"
-    printf '# %s\n\n_Section placeholder — populate from the docs-content mirror._\n' \
+    printf '# %s\n\n_Section placeholder: populate from the docs-content mirror._\n' \
       "$(printf '%s' "$sub" | tr '[:lower:]' '[:upper:]')" > "${WORKSPACE}/${sub}/index.md"
   fi
 done

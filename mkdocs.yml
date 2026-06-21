@@ -38,18 +38,23 @@ theme:
     - search.highlight
     - content.code.copy
     - content.tabs.link
+  # Palette: `primary: custom` + `accent: custom` hands the brand color over to
+  # docs/stylesheets/extra.css, which maps Material's CSS custom properties onto
+  # the @curaos/ui "Aqua" tokens (bluish-aqua over cool slate-teal) so the docs
+  # read like the live apps and the marketing site. Scheme names stay
+  # default/slate because extra.css targets [data-md-color-scheme="default|slate"].
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
-      accent: teal
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
-      accent: teal
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
@@ -72,11 +77,22 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
-# Navigation is intentionally minimal here; build-external.sh can extend nav from
-# the staged content tree. Keep top-level entries stable for deep links.
+# @curaos/ui "Aqua" skin: maps Material's theme onto the ui-kit tokens so the
+# docs match the apps + marketing site. Bundled local stylesheet (no CDN fetch),
+# so it holds under the strict CSP + air-gap zero-egress requirement.
+extra_css:
+  - stylesheets/extra.css
+
+# Keep top-level entries stable for deep links. Every authored content section is
+# listed so it is reachable in the nav (not just discoverable via search).
 nav:
   - Home: index.md
-  - Install: install/index.md
+  - Getting started: getting-started/index.md
+  - Install (self-host): install/index.md
+  - Architecture: architecture/index.md
+  - Apps guide: apps/index.md
+  - Capabilities: capabilities/index.md
+  - Auth (OIDC): auth/index.md
   - Integration: integration/index.md
   - Operator runbooks: operations/index.md
   - API reference: api/index.md

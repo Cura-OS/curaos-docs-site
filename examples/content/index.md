@@ -1,4 +1,33 @@
-# CuraOS Documentation
+---
+# The home page renders through the GENERATED hero landing template
+# (overrides/home.html, emitted by src/theme/emit-theme.ts), not the stock
+# Material grid-cards. Authored COPY lives here in front matter so the layout +
+# inline-SVG art stay generated while the words stay in content.
+template: home.html
+title: CuraOS Documentation
+# The landing is full-bleed: hide the left nav tree + right TOC so the hero and
+# generated sections own the full content width (Material reads `hide`).
+hide:
+  - navigation
+  - toc
+hero_eyebrow: Pre-1.0 / active buildout
+hero_headline: Documentation for a composable, self-hosted-first care platform
+hero_sub: >-
+  CuraOS is a generic neutral core with opt-in vertical overlays. Run it on your
+  own infrastructure, compose only the pieces you need, and extend it through
+  documented seams instead of forking it.
+stats:
+  - value: "19"
+    label: Frontend apps live
+  - value: "~60"
+    label: Backend services deployed
+  - value: "4"
+    label: Deployment models
+  - value: "0"
+    label: Required cloud dependencies
+---
+
+## What CuraOS is
 
 CuraOS (Care Oriented Stack) is a composable, self-hosted-first platform: a
 generic neutral core with opt-in vertical overlays (Health, Education, ERP). It
@@ -9,66 +38,8 @@ This is the customer and operator documentation: how to install it, how it is
 put together, what the apps do, how to call the API, how to wire up auth, and
 how to operate it day to day.
 
-## What is running today
-
-CuraOS is in active development (pre-1.0), but it is not vaporware. A live
-deployment runs on self-hosted Kubernetes right now:
-
-- **19 frontend apps**, each reachable on its own subdomain (admin, builder,
-  fleet, front-office, the business suite, and the personal suite), on one
-  shared design system, with dark mode and right-to-left Arabic that persist
-  across reloads.
-- **Around 60 backend services** deployed: the neutral core plus the HealthStack
-  overlay and personal/business variants, fronted by an API gateway. A first
-  set (commerce, orders, fleet, calendar, donation, site, automation,
-  plugin-runtime) already serves real seeded data through live read endpoints;
-  the rest are scaffolded and filling in along the roadmap.
-- **OIDC single sign-on** through Pocket-ID (Authorization Code with PKCE),
-  brokered by the identity service into a CuraOS session.
-- **Self-hosted runtime**: Kubernetes (k3d), CNPG-managed PostgreSQL, Valkey,
-  and an ingress controller, with the public edge fronted by Caddy and
-  Cloudflare.
-
-Capability claims that are not yet generally available are called out as design
-intent rather than shipped behavior.
-
-## Start here
-
-<div class="grid cards" markdown>
-
-- **[Getting started](getting-started/index.md)**
-
-    The five-minute tour: concepts, the live surfaces, and your first steps.
-
-- **[Install (self-host)](install/index.md)**
-
-    Deploy CuraOS on Kubernetes with CNPG, Valkey, and ingress.
-
-- **[Architecture](architecture/index.md)**
-
-    The layered model, the charter principles, and the real stack.
-
-- **[Apps guide](apps/index.md)**
-
-    What each of the 19 apps does and where to find it.
-
-- **[API reference](api/index.md)**
-
-    How to call the API gateway, and the path convention.
-
-- **[Services catalogue](services/index.md)**
-
-    Every service, grouped by layer, with its path prefix.
-
-- **[Auth setup](auth/index.md)**
-
-    Pocket-ID OIDC and the Authorization Code + PKCE flow.
-
-- **[Security & compliance](security/index.md)**
-
-    The security model, GDPR and HIPAA posture, and the PHI boundary.
-
-</div>
+Use the cards above to find your path in, or jump straight to
+[Getting started](getting-started/index.md).
 
 ## Charter, in one paragraph
 

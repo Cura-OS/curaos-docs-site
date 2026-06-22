@@ -13,6 +13,7 @@
     "ci": "bash ci.sh",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
+    "emit:theme": "bun src/theme/emit-theme.ts",
     "build:external": "bash scripts/build-external.sh",
     "build:techdocs": "bash scripts/build-techdocs.sh",
     "build:api": "bash scripts/build-api-docs.sh",

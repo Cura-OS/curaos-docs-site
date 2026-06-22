@@ -13,6 +13,34 @@ The build is **deliberate**: GitHub Actions (Pages publish) is
 `workflow_dispatch`-only. The local gate (`just ci`) is the merge authority for
 this repo's own changes.
 
+## Theme (generated, not hand-edited)
+
+The docs skin is **generated** by a parameterized theme generator, not a
+hand-written stylesheet. The renderer IS the generator:
+
+- `src/design-tokens.ts` is the **shared** design-token source (OKLCH palette
+  ramps, type scale, motion, elevation, the inline-SVG illustration library, the
+  self-hosted font stack). The marketing site and app fleet are meant to consume
+  the same primitives, so a palette change lands in one place.
+- `src/theme/emit.ts` + `src/theme/home.ts` emit, from a **theme-variant key**,
+  the full `extra.css` (self-hosted woff2 via `@font-face`, OKLCH tokens mapped
+  onto Material's CSS vars, a real elevation + motion + RTL system) plus the
+  Material `overrides/` templates (the real hero landing, with inline-SVG
+  architecture art) that replace the stock `grid cards`.
+- Two named variants ship (`aurora`, the de-tealed CuraOS docs default, and
+  `aqua`, a legacy compatibility skin). Adding a variant = a new entry in
+  `THEME_VARIANTS`, not a layout edit.
+
+```bash
+bun run emit:theme                 # regenerate the active skin + override templates
+bun run emit:theme --variant aqua  # emit a different variant (proves parameterization)
+```
+
+The generated `extra.css` / `overrides/` are committed; a test asserts they stay
+in sync with a fresh emit. Everything is **zero-egress**: the woff2 are bundled
+under `examples/content/stylesheets/fonts/` and referenced with relative `url()`,
+so air-gap installs render byte-identically.
+
 ## Usage
 
 Authored content is supplied by the caller via `--content-dir`; this repo ships
@@ -36,6 +64,10 @@ just offline-smoke           # prove zero-egress static render + offline search
 | Path | Purpose |
 |---|---|
 | `mkdocs.yml` | MkDocs Material config for the external/offline site. |
+| `src/design-tokens.ts` | Shared OKLCH tokens + type/motion/elevation + SVG library. |
+| `src/theme/` | Parameterized theme generator (emits `extra.css` + `overrides/`). |
+| `overrides/` | Generated Material custom theme (hero landing + main partial). |
+| `examples/content/stylesheets/fonts/` | Bundled self-hosted woff2 (zero-egress). |
 | `scripts/build-external.sh` | Stage content + `mkdocs build --strict`. |
 | `scripts/build-api-docs.sh` | TypeDoc → Markdown API docs. |
 | `scripts/build-techdocs.sh` | Per-service Backstage TechDocs build harness. |

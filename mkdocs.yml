@@ -26,10 +26,17 @@ strict: true
 theme:
   name: material
   language: en
+  # Custom Material override theme: overrides/ holds the GENERATED templates
+  # (main.html + the home.html hero landing) emitted by src/theme/emit-theme.ts.
+  # The landing replaces stock `grid cards` with a real generated hero + inline
+  # SVG architecture art, all driven by the shared design tokens.
+  custom_dir: overrides
   # Self-host nothing from Google Fonts; air-gap installs have no CDN egress.
-  # `font: false` makes Material use the system font stack and emit zero remote
-  # <link>/<script> font references. The Aqua palette is layered on top via
-  # extra_css (local file), so docs visually matches the @curaos/ui apps.
+  # `font: false` disables Material's Google Fonts CDN (zero remote font <link>).
+  # The actual self-hosted woff2 (Inter + JetBrains Mono + IBM Plex Sans Arabic)
+  # is bundled and declared via @font-face in extra.css (a local stylesheet), so
+  # the fonts render byte-identically offline / air-gap. The "Aurora" identity
+  # (de-tealed indigo-violet + warm coral, OKLCH) is layered on via extra_css.
   font: false
   features:
     - navigation.instant
@@ -43,19 +50,21 @@ theme:
     - content.code.copy
     - content.tabs.link
   palette:
-    # Named seed = teal (closest Material primitive to the Aqua brand); the
-    # exact @curaos/ui token values are applied by extra.css.
+    # The named seed is irrelevant to the final look: extra.css overrides every
+    # Material color variable from the OKLCH "Aurora" tokens (de-tealed). The
+    # seed below is kept neutral (indigo) only so any pre-CSS flash matches the
+    # brand hue family rather than a default. Light + dark both honored.
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
-      accent: teal
+      primary: indigo
+      accent: indigo
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
-      accent: teal
+      primary: indigo
+      accent: indigo
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode

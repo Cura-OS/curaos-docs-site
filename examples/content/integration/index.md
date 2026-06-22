@@ -26,7 +26,9 @@ not against a service's current behavior, and your integration stays valid acros
 the contract's versioned deprecation window.
 
 - **API contracts**: OpenAPI for the HTTP surface.
-- **Event contracts**: AsyncAPI for the durable event schemas.
+- **Event contracts**: AsyncAPI for the durable event schemas. The event model,
+  delivery guarantees, and how to consume topics are described in
+  [Event contracts](../events/index.md).
 - **Versioning**: every contract carries a semantic version; all active versions
   are honored until deactivated.
 
@@ -64,5 +66,6 @@ neutral services hold references and metadata only. An integration that touches
 protected data goes through the relevant overlay, under that tenant's isolation,
 never through the neutral core.
 
-Next: the [API reference](../api/index.md) for the service catalog, and
+Next: the [API reference](../api/index.md) for the synchronous surface,
+[Event contracts](../events/index.md) for the durable event surface, and
 [Operations](../operations/index.md) for running the deployment.

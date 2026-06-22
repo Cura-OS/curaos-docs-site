@@ -71,6 +71,8 @@ Vertical-agnostic capability services, each under its own prefix. Examples:
 
 (The full set covers settings, reports, geospatial, fleet, sales, procurement,
 inventory, HR, CRM, accounting, e-sign, donation, event, integrations, and site.)
+The complete, grouped list of every service and its prefix is in the
+[Services catalogue](../services/index.md).
 
 ### Vertical overlays
 
@@ -98,5 +100,6 @@ SDK and contract packages. Contract specifications (OpenAPI / AsyncAPI) are the
 source of truth for the wire format and are linked from the relevant service
 docs; TypeDoc documents the code-level API, not the wire contract.
 
-Next: [Auth setup](../auth/index.md) for the OIDC flow, and
-[Integration](../integration/index.md) for the event contracts.
+Next: [Auth setup](../auth/index.md) for the OIDC flow,
+[Event contracts](../events/index.md) for the durable event surface, and
+[Integration](../integration/index.md) for the end-to-end integration flow.

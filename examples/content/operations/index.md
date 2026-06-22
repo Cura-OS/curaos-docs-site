@@ -75,4 +75,7 @@ In the reference deployment, ingress-nginx routes in-cluster, and the public edg
 is Caddy plus Cloudflare for TLS and a public hostname. For a private or air-gap
 install, the public edge is optional; the ingress controller is enough.
 
+The full security model, the GDPR and HIPAA posture, and the operator's share of
+compliance responsibility are in [Security & compliance](../security/index.md).
+
 Next: [Integration](../integration/index.md) for connecting external systems.

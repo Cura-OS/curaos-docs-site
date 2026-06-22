@@ -88,19 +88,27 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
-# Navigation. Every entry maps to a real authored page under examples/content.
-# Keep top-level entries stable for deep links.
+# Navigation. Every entry maps to a real authored page in the content tree.
+# Grouped into Overview / Architecture / Build & integrate / Operate so the
+# growing page set stays navigable; keep leaf paths stable for deep links.
 nav:
   - Home: index.md
   - Getting started: getting-started/index.md
   - Install (self-host): install/index.md
-  - Architecture: architecture/index.md
-  - Apps guide: apps/index.md
-  - Capabilities: capabilities/index.md
-  - API reference: api/index.md
-  - Auth setup: auth/index.md
-  - Operations: operations/index.md
-  - Integration: integration/index.md
+  - Architecture:
+      - Overview: architecture/index.md
+      - Capabilities: capabilities/index.md
+      - Workflow & builder: builder/index.md
+      - Services catalogue: services/index.md
+      - Apps guide: apps/index.md
+  - Build & integrate:
+      - Integration: integration/index.md
+      - API reference: api/index.md
+      - Event contracts: events/index.md
+      - Auth setup: auth/index.md
+  - Operate:
+      - Operations: operations/index.md
+      - Security & compliance: security/index.md
 
 extra:
   generator: false

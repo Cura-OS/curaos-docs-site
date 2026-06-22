@@ -54,11 +54,19 @@ intent rather than shipped behavior.
 
 - **[API reference](api/index.md)**
 
-    The service catalog and how to call the API gateway.
+    How to call the API gateway, and the path convention.
+
+- **[Services catalogue](services/index.md)**
+
+    Every service, grouped by layer, with its path prefix.
 
 - **[Auth setup](auth/index.md)**
 
     Pocket-ID OIDC and the Authorization Code + PKCE flow.
+
+- **[Security & compliance](security/index.md)**
+
+    The security model, GDPR and HIPAA posture, and the PHI boundary.
 
 </div>
 

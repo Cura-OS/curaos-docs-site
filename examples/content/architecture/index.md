@@ -92,5 +92,9 @@ CuraOS publishes its seams and treats them as contracts:
 - Privacy and compliance target GDPR and HIPAA, with the PHI/PII boundary
   enforced at both the schema and the service layer.
 
+The full security model, the GDPR and HIPAA posture, and the PHI boundary are in
+[Security & compliance](../security/index.md).
+
 Next: the [Capabilities](../capabilities/index.md) the core and overlays provide,
-and the [Apps guide](../apps/index.md) for the surfaces built on top.
+the [Services catalogue](../services/index.md) for every service, and the
+[Apps guide](../apps/index.md) for the surfaces built on top.

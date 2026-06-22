@@ -21,6 +21,9 @@ Automation core
 :   Low-code actions, connectors, and scheduling, so integrations and routine
     work are configured rather than coded.
 
+How these three turn a domain definition into a running app is described in
+[Workflow & builder](../builder/index.md).
+
 ## Neutral capabilities
 
 Generic and vertical-agnostic. Each is owned by a neutral core service and is
@@ -70,6 +73,9 @@ These hold across every capability:
 - **Security in depth.** OIDC with PKCE, RBAC with optional ABAC, tamper-evident
   audit, and a logged break-glass path.
 
-To see how these are exposed over the wire, read the
-[API reference](../api/index.md). For the structure behind it, see
-[Architecture](../architecture/index.md).
+For the complete, grouped list of every service that owns these capabilities, see
+the [Services catalogue](../services/index.md). To see how they are exposed over
+the wire, read the [API reference](../api/index.md) and
+[Event contracts](../events/index.md). For the structure behind it, see
+[Architecture](../architecture/index.md). For the privacy and compliance posture,
+see [Security & compliance](../security/index.md).

@@ -90,6 +90,21 @@ migrations. All active versions are honored until they are deactivated, so an
 integration built against a current version keeps working through the
 deprecation window.
 
+## Contract sources
+
+The wire contracts live with the services and SDK packages:
+
+| Contract surface | Source path | Current count |
+| --- | --- | --- |
+| HTTP TypeSpec | `backend/services/*/specs/*.tsp` | 52 specs |
+| Durable events | `backend/services/*/specs/*.asyncapi.yaml` | 50 specs |
+| Generated SDK clients | `backend/packages/*-sdk/openapi-ts.config.ts` | 12 SDK configs |
+
+`DOMAIN_ROUTE_MAP` in `tools/codegen/src/api-gateway-emit.ts` is the gateway
+routing source of truth. It emits the local route map, Kubernetes ingress
+rules, and route-contract checks, so docs, gateway paths, and generated clients
+stay aligned.
+
 ## Generated reference
 
 A generated TypeScript API reference (TypeDoc) is produced at build time for the

@@ -7,10 +7,11 @@ it is grouped, and the naming convention that tells you a service's layer at a
 glance.
 
 !!! note "Repository versus deployment"
-    The platform repository defines around 95 services across the neutral core,
-    the HealthStack overlay, the EducationStack overlay, and the personal and
-    business variants. The current local reference stack routes 38 services
-    through the gateway and exposes 83 gateway domains. The source of truth is
+    The platform repository contains 93 backend service directories across the
+    neutral core, the HealthStack overlay, the EducationStack overlay, and the
+    personal and business variants. The current local reference stack routes 38
+    services through the gateway and exposes 83 gateway domains. The source of
+    truth is
     generated from `DOMAIN_ROUTE_MAP` and rendered to
     `ops/dev/local-stack/route-map.txt` plus the Kubernetes ingress manifest.
 
@@ -60,7 +61,7 @@ holds references and metadata only, never protected data.
 | `search-service` | Cross-domain search |
 | `reports-service` | Reporting and analytics surfaces |
 | `storage-service` | Object and file storage references |
-| `document-core-service` | Document management |
+| `documents-core-service` | Document management |
 | `calendar-core-service` | Scheduling and calendars |
 | `tasks-core-service` | Work items and task management |
 | `geospatial-core-service` | Geospatial primitives |
@@ -135,6 +136,11 @@ schemas, never in the neutral core.
 Where a domain's subject owner genuinely differs, a `personal-*` and a
 `business-*` variant exist alongside (or instead of) the neutral core service.
 
+The current routed local stack includes the variants listed below. Other service
+directories exist in the repository for planned or scaffolded domain depth, but
+they are not part of the 38-service local reference gateway until they appear in
+`ops/dev/local-stack/svc-ports.txt` and `route-map.txt`.
+
 | Domain | Personal | Business |
 | --- | --- | --- |
 | Workflow | `personal-workflow-service` | `business-workflow-service` |
@@ -142,18 +148,15 @@ Where a domain's subject owner genuinely differs, a `personal-*` and a
 | Site | `personal-site-service` | `business-site-service` |
 | Shop / commerce | `personal-shop-service` | `business-shop-service` |
 | Donation | `personal-donation-service` | `business-donation-service` |
-| CRM | `personal-crm-service` | `crm-service` |
-| HR | `personal-hr-service` | `hr-service` |
-| E-Sign | `personal-esign-service` | `business-esign-service` |
-| Conversion | `personal-conversion-service` | `business-conversion-service` |
-| Tasks | `personal-tasks-service` | (neutral `tasks-core-service`) |
-| Notes | `personal-notes-service` | `business-docs-service` |
+| Tasks | (neutral `tasks-core-service`) | (neutral `tasks-core-service`) |
+| Notes | `personal-notes-service` | (neutral `documents-core-service`) |
 | Tracking | `personal-tracking-service` | (neutral `fleet-core-service`) |
 | Calendar | `personal-calendar-service` | (neutral `calendar-core-service`) |
-| Patient | `personal-patient-service` | `business-patient-service` |
+| Patient | (neutral `patient-core-service`) | (neutral `patient-core-service`) |
 
-The business suite also includes `business-cases-service` and
-`business-projects-service` for case and project management.
+Planned or scaffolded variants such as CRM, HR, e-sign, conversion, cases, and
+projects live in the repository, but the docs and gateway treat them as active
+only when their generated route and port entries are present.
 
 ## Calling a service
 
@@ -220,3 +223,49 @@ The local stack gateway listens on port `4100`. Service ports below come from
 | `storage-service` | `4033` | `/api/v1/storage` |
 | `tasks-core-service` | `4034` | `/api/v1/personal-tasks`, `/api/v1/clinical-tasks` |
 | `tenancy-core-service` | `4035` | `/api/v1/tenancy` |
+
+## Contract coverage for routed services
+
+Service-local contracts live under `backend/services/<service>/specs/`. SDK
+configs live under `backend/packages/*-sdk/openapi-ts.config.ts`.
+
+| Service | TypeSpec | AsyncAPI | SDK config |
+| --- | --- | --- | --- |
+| `accounting-core-service` | Yes | Yes | No |
+| `audit-core-service` | No | No | `audit-sdk` |
+| `automation-core-service` | Yes | Yes | No |
+| `business-automation-service` | Yes | Yes | No |
+| `business-donation-service` | Yes | Yes | No |
+| `business-site-service` | Yes | Yes | No |
+| `business-workflow-service` | Yes | Yes | No |
+| `calendar-core-service` | Yes | Yes | `calendar-sdk` |
+| `clinical-doc-service` | Yes | Yes | `clinical-doc-sdk` |
+| `commerce-core-service` | Yes | Yes | No |
+| `donation-core-service` | Yes | Yes | No |
+| `fleet-core-service` | Yes | Yes | No |
+| `geospatial-core-service` | Yes | Yes | No |
+| `healthstack-billing-service` | Yes | Yes | No |
+| `healthstack-consent-service` | Yes | Yes | No |
+| `healthstack-messaging-service` | Yes | Yes | No |
+| `identity-service` | Yes | No | No |
+| `inventory-core-service` | Yes | Yes | No |
+| `notify-service` | Yes | Yes | `notify-sdk` |
+| `orders-service` | Yes | Yes | `orders-sdk` |
+| `personal-calendar-service` | Yes | Yes | No |
+| `personal-donation-service` | Yes | Yes | No |
+| `personal-notes-service` | Yes | Yes | No |
+| `personal-shop-service` | Yes | Yes | No |
+| `personal-tracking-service` | Yes | Yes | No |
+| `personal-workflow-service` | Yes | Yes | No |
+| `plugin-runtime-service` | Yes | Yes | No |
+| `procurement-core-service` | Yes | Yes | No |
+| `reports-service` | Yes | Yes | `reports-sdk` |
+| `sales-core-service` | Yes | Yes | No |
+| `scheduling-service` | Yes | Yes | `scheduling-sdk` |
+| `settings-service` | Yes | Yes | `settings-sdk` |
+| `site-core-service` | Yes | Yes | No |
+| `storage-service` | Yes | Yes | `storage-sdk` |
+| `tasks-core-service` | Yes | Yes | `tasks-sdk` |
+| `tenancy-core-service` | Yes | Yes | No |
+| `patient-core-service` | No | No | No |
+| `personal-site-service` | Yes | Yes | No |

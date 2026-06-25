@@ -38,6 +38,36 @@ These app projects are tracked in the repo but are not public vanity web hosts.
 | Clinician app | Expo mobile app | Mobile clinical workflow shell. |
 | Patient app | Expo mobile app | Mobile patient workflow shell. |
 
+## Project inventory
+
+Every frontend project has a stable slug. Public host is `none` when the app is
+cluster-only or mobile-only.
+
+| Project slug | Surface | Public host |
+| --- | --- | --- |
+| `admin-app` | Web | `https://admin.abualruz.com` |
+| `builder-studio` | Web, cluster-only | none |
+| `business-automation` | Web | `https://biz-automation.abualruz.com` |
+| `business-donation` | Web | `https://biz-donation.abualruz.com` |
+| `business-shop` | Web | `https://biz-shop.abualruz.com` |
+| `business-site` | Web | `https://biz-site.abualruz.com` |
+| `business-workflow` | Web | `https://biz-workflow.abualruz.com` |
+| `clinician-app` | Expo mobile | none |
+| `fleet-manager` | Web | `https://fleet.abualruz.com` |
+| `front-office` | Web | `https://front-office.abualruz.com` |
+| `hosted-login` | Web | `https://login.abualruz.com` |
+| `patient-app` | Expo mobile | none |
+| `personal-automation` | Web | `https://my-automation.abualruz.com` |
+| `personal-calendar` | Web | `https://my-calendar.abualruz.com` |
+| `personal-donation` | Web | `https://my-donation.abualruz.com` |
+| `personal-notes` | Web | `https://my-notes.abualruz.com` |
+| `personal-shop` | Web | `https://my-shop.abualruz.com` |
+| `personal-site` | Web | `https://my-site.abualruz.com` |
+| `personal-tasks` | Web | `https://my-tasks.abualruz.com` |
+| `personal-tracking` | Web | `https://my-tracking.abualruz.com` |
+| `personal-workflow` | Web | `https://my-workflow.abualruz.com` |
+| `workflow-designer` | Web | `https://builder.abualruz.com` |
+
 ## Business suite
 
 Run an organization. These are the `biz-*` apps.

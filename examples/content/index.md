@@ -17,10 +17,10 @@ hero_sub: >-
   own infrastructure, compose only the pieces you need, and extend it through
   documented seams instead of forking it.
 stats:
-  - value: "19"
-    label: Frontend apps live
-  - value: "~60"
-    label: Backend services deployed
+  - value: "22"
+    label: Frontend app projects
+  - value: "38"
+    label: Routed backend services
   - value: "4"
     label: Deployment models
   - value: "0"

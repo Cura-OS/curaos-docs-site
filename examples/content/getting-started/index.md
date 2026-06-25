@@ -34,7 +34,7 @@ apps require an account.
 | Admin | `https://admin.abualruz.com` | Tenant and platform administration |
 | Builder | `https://builder.abualruz.com` | App and site builder |
 | Front office | `https://front-office.abualruz.com` | Staff operations desk |
-| API gateway | `https://api.abualruz.com` | Entry point to around 60 backend services |
+| API gateway | `https://api.abualruz.com` | Entry point to versioned `/api/v1` domains |
 | Sign in | `https://login.abualruz.com` | Shared OIDC sign-in surface |
 
 A full list of every app is in the [Apps guide](../apps/index.md).
@@ -47,10 +47,10 @@ any app subdomain above and complete the OIDC sign-in: a successful redirect
 through Pocket-ID and back into a CuraOS session exercises the gateway, the
 identity broker, and the app together.
 
-A first set of services (commerce, orders, fleet, calendar, donation, site,
-automation, plugin-runtime) serves real seeded data through live read endpoints
-today; the rest are scaffolded. See the [API reference](../api/index.md) for the
-service catalog and the path convention.
+The current local reference stack routes 38 services through the gateway and
+exposes 83 generated `/api/v1` domains. See the
+[API reference](../api/index.md) for the path convention and the
+[Services catalogue](../services/index.md) for services, ports, and domains.
 
 ## Choose your path
 

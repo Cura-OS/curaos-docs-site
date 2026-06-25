@@ -2,7 +2,7 @@
 
 CuraOS is **builder-led**: experiences are expressed through a workflow/BPM
 engine and an app/site builder, so behavior is configured against documented
-seams rather than hand-forked. This is why all 19 apps share one look, one
+seams rather than hand-forked. This is why the web app suite shares one look, one
 interaction model, and one auth flow. This page explains the three foundation
 services that make that possible and how they fit together.
 
@@ -53,7 +53,7 @@ published seams, not a fork of generated code.
 
 ## Why generated, not hand-coded
 
-The 19 apps are generated from BPM definitions and domain contracts and share
+The web apps are generated from BPM definitions and domain contracts and share
 the `@curaos/ui` design system. That is a deliberate charter choice:
 
 - **Consistency.** The look, the interaction patterns, and the auth flow are
@@ -61,7 +61,7 @@ the `@curaos/ui` design system. That is a deliberate charter choice:
 - **Internationalization built in.** Generated surfaces ship dark mode and
   right-to-left Arabic that persist across reloads, without per-app work.
 - **One place to improve.** A fix or an enhancement to the generator improves
-  every app at once, instead of being re-applied by hand 19 times.
+  every generated app at once, instead of being re-applied by hand.
 
 Where a generated surface cannot yet express a design, the answer is to enrich
 the generator so it can, not to hand-code a one-off that drifts out of the mold.

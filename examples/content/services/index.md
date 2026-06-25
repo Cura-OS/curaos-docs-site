@@ -9,10 +9,10 @@ glance.
 !!! note "Repository versus deployment"
     The platform repository defines around 95 services across the neutral core,
     the HealthStack overlay, the EducationStack overlay, and the personal and
-    business variants. The live reference deployment runs roughly 60 of them; the
-    remainder are scaffolded and filling in along the roadmap. A first set
-    (commerce, orders, fleet, calendar, donation, site, automation,
-    plugin-runtime) already serves real seeded data through live read endpoints.
+    business variants. The current local reference stack routes 38 services
+    through the gateway and exposes 83 gateway domains. The source of truth is
+    generated from `DOMAIN_ROUTE_MAP` and rendered to
+    `ops/dev/local-stack/route-map.txt` plus the Kubernetes ingress manifest.
 
 ## Naming convention
 
@@ -157,18 +157,66 @@ The business suite also includes `business-cases-service` and
 
 ## Calling a service
 
-Every service is reached the same way: through the API gateway, under its path
-prefix, with an OIDC bearer token (health endpoints excepted).
+Every service is reached the same way: through the API gateway, under a
+versioned `/api/v1/<domain>` path, with an OIDC bearer token (health endpoints
+excepted).
 
 ```bash
 # Unauthenticated liveness probe.
-curl -i https://api.abualruz.com/identity/healthz
+curl -i https://api.abualruz.com/api/v1/identity/healthz
 
 # Authenticated read.
-curl https://api.abualruz.com/tenancy/tenants \
+curl https://api.abualruz.com/api/v1/tenancy \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
 
 The full path convention and authentication details are in the
 [API reference](../api/index.md). The durable event topics each service
 publishes are described in [Event contracts](../events/index.md).
+
+## Local routed services and ports
+
+The local stack gateway listens on port `4100`. Service ports below come from
+`ops/dev/local-stack/svc-ports.txt`; route domains come from the generated
+`ops/dev/local-stack/route-map.txt`.
+
+| Service | Local port | Gateway domains |
+| --- | --- | --- |
+| `accounting-core-service` | `4001` | `/api/v1/accounting`, `/api/v1/payouts` |
+| `audit-core-service` | `4002` | `/api/v1/audit` |
+| `automation-core-service` | `4003` | `/api/v1/automation`, `/api/v1/connectors`, `/api/v1/flows`, `/api/v1/automation-runs`, `/api/v1/services`, `/api/v1/templates` |
+| `business-automation-service` | `4004` | `/api/v1/business-automation` |
+| `business-donation-service` | `4005` | `/api/v1/campaigns`, `/api/v1/donors`, `/api/v1/donation-summary`, `/api/v1/donation-activity` |
+| `business-site-service` | `4006` | `/api/v1/builder`, `/api/v1/business-site` |
+| `business-workflow-service` | `4007` | `/api/v1/workflow`, `/api/v1/bpm`, `/api/v1/process-definitions` |
+| `calendar-core-service` | `4008` | `/api/v1/calendar` |
+| `clinical-doc-service` | `4009` | `/api/v1/healthstack-clinical-docs`, `/api/v1/clinical` |
+| `commerce-core-service` | `4010` | `/api/v1/checkout`, `/api/v1/catalog`, `/api/v1/commerce` |
+| `donation-core-service` | `4011` | `/api/v1/donations`, `/api/v1/causes`, `/api/v1/receipts`, `/api/v1/recurring` |
+| `fleet-core-service` | `4012` | `/api/v1/fleet`, `/api/v1/vehicles`, `/api/v1/dispatch`, `/api/v1/maintenance`, `/api/v1/crew`, `/api/v1/trips`, `/api/v1/fleet-alerts`, `/api/v1/fleet-summary` |
+| `geospatial-core-service` | `4013` | `/api/v1/geospatial` |
+| `healthstack-billing-service` | `4014` | `/api/v1/healthstack-billing` |
+| `healthstack-consent-service` | `4015` | `/api/v1/consent` |
+| `healthstack-messaging-service` | `4016` | `/api/v1/healthstack-messaging` |
+| `identity-service` | `4017` | `/api/v1/identity`, `/api/v1/users`, `/api/v1/account` |
+| `inventory-core-service` | `4018` | `/api/v1/inventory` |
+| `notify-service` | `4019` | `/api/v1/notify`, `/api/v1/communications` |
+| `orders-service` | `4020` | `/api/v1/orders`, `/api/v1/healthstack-orders`, `/api/v1/shop-orders` |
+| `patient-core-service` | `4038` | `/api/v1/patients`, `/api/v1/patient`, `/api/v1/contracts` |
+| `personal-calendar-service` | `4021` | `/api/v1/personal-calendar` |
+| `personal-donation-service` | `4022` | `/api/v1/giving` |
+| `personal-notes-service` | `4023` | `/api/v1/notes`, `/api/v1/folders` |
+| `personal-shop-service` | `4024` | `/api/v1/shop`, `/api/v1/personal-shops` |
+| `personal-site-service` | `4039` | `/api/v1/studio` |
+| `personal-tracking-service` | `4025` | `/api/v1/tracking`, `/api/v1/trackers`, `/api/v1/personal-tracking`, `/api/v1/goals` |
+| `personal-workflow-service` | `4037` | `/api/v1/pworkflow-flows`, `/api/v1/pworkflow-runs`, `/api/v1/pworkflow-templates`, `/api/v1/pworkflow-dashboard`, `/api/v1/personal-workflow` |
+| `plugin-runtime-service` | `4026` | `/api/v1/plugins` |
+| `procurement-core-service` | `4027` | `/api/v1/procurement` |
+| `reports-service` | `4028` | `/api/v1/reports`, `/api/v1/analytics`, `/api/v1/ops` |
+| `sales-core-service` | `4029` | `/api/v1/sales` |
+| `scheduling-service` | `4030` | `/api/v1/healthstack-scheduling`, `/api/v1/scheduling` |
+| `settings-service` | `4031` | `/api/v1/settings` |
+| `site-core-service` | `4032` | `/api/v1/site` |
+| `storage-service` | `4033` | `/api/v1/storage` |
+| `tasks-core-service` | `4034` | `/api/v1/personal-tasks`, `/api/v1/clinical-tasks` |
+| `tenancy-core-service` | `4035` | `/api/v1/tenancy` |

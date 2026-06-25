@@ -1,15 +1,20 @@
 # Apps guide
 
-CuraOS ships 19 frontend apps. Every app is generated from the same workflow
-definitions and domain contracts, themed by one shared design system
-(`@curaos/ui`), and reachable on its own subdomain. Dark mode and right-to-left
-Arabic are built in and persist across reloads. Sign-in is OIDC through
-Pocket-ID, brokered by the identity service into a CuraOS session; some apps
-require an account.
+CuraOS tracks 22 frontend app projects: 20 web apps plus 2 Expo mobile apps.
+The local real-data render gate exercises the 20 web apps, and the public
+reference deployment exposes 19 vanity web hosts today. The remaining web app,
+Builder Studio, is deployed as a cluster app without a public vanity host. The
+mobile apps do not have web subdomains.
 
-The apps fall into three groups: the **Platform** apps for operating and
-building the system, the **Business suite** for running an organization, and the
-**Personal suite** for an individual.
+Every web app is generated from the same workflow definitions and domain
+contracts, themed by one shared design system (`@curaos/ui`). Dark mode and
+right-to-left Arabic are built in and persist across reloads. Sign-in is OIDC
+through Pocket-ID, brokered by the identity service into a CuraOS session; some
+apps require an account.
+
+The public web apps fall into three groups: the **Platform** apps for operating
+and building the system, the **Business suite** for running an organization, and
+the **Personal suite** for an individual.
 
 ## Platform
 
@@ -22,6 +27,16 @@ Operate and build the system itself.
 | Front office | `https://front-office.abualruz.com` | Staff-facing operations desk: tasks, scheduling, and day-to-day workflows. |
 | Fleet | `https://fleet.abualruz.com` | Vehicle and asset fleet tracking and dispatch. |
 | Login | `https://login.abualruz.com` | Shared OIDC sign-in surface (Authorization Code with PKCE via Pocket-ID). |
+
+## Cluster and mobile apps
+
+These app projects are tracked in the repo but are not public vanity web hosts.
+
+| App | Surface | What it does |
+| --- | --- | --- |
+| Builder Studio | Cluster web app | Studio surface for generated builder workflows and site publishing. |
+| Clinician app | Expo mobile app | Mobile clinical workflow shell. |
+| Patient app | Expo mobile app | Mobile patient workflow shell. |
 
 ## Business suite
 
@@ -55,8 +70,9 @@ For an individual. These are the `my-*` apps.
 
 Apps are not hand-coded one by one. They are generated from BPM definitions and
 domain contracts and share the `@curaos/ui` design system, so the look, the
-interaction patterns, and the auth flow are consistent across all 19. Each app
-talks to the backend through the API gateway and authenticates through Pocket-ID.
+interaction patterns, and the auth flow are consistent across the web suite.
+Each app talks to the backend through the API gateway and authenticates through
+Pocket-ID.
 
 The personal (`my-*`) and business (`biz-*`) variants of a domain (workflow,
 automation, site, shop, donation) share the same neutral capability underneath;

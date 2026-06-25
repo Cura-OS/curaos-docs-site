@@ -15,7 +15,8 @@ Workflow / BPM core
 
 App / site builder
 :   Generates admin, ops, and external surfaces from BPM definitions, domain
-    contracts, and shared theming. This is how all 19 apps stay consistent.
+    contracts, and shared theming. This is how the web app suite stays
+    consistent.
 
 Automation core
 :   Low-code actions, connectors, and scheduling, so integrations and routine

@@ -9,8 +9,8 @@ Every service exposes an unauthenticated health endpoint, so liveness can be
 probed without a token. Through the gateway:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}\n" https://<host>/identity/healthz
-curl -s -o /dev/null -w "%{http_code}\n" https://<host>/tenancy/healthz
+curl -s -o /dev/null -w "%{http_code}\n" https://<host>/api/v1/identity/healthz
+curl -s -o /dev/null -w "%{http_code}\n" https://<host>/api/v1/tenancy/healthz
 ```
 
 A `200` means the service is up. Wire these into your uptime checks and the

@@ -7,7 +7,7 @@ wire up your own provider.
 
 ## The flow
 
-All 19 apps and the API gateway speak the same OIDC flow:
+All public web apps and the API gateway speak the same OIDC flow:
 
 1. The user opens an app and is redirected to Pocket-ID (the live IdP is at
    `auth.abualruz.com`).
@@ -40,7 +40,7 @@ client-secret flow in the browser.
 The API gateway accepts the access token Pocket-ID issues:
 
 ```bash
-curl https://api.abualruz.com/tenancy/tenants \
+curl https://api.abualruz.com/api/v1/tenancy \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
 
@@ -79,7 +79,7 @@ the gateway against it.
 - **Token rejected by the gateway.** Check that the gateway's expected issuer and
   audience match what the provider puts in the token.
 - **Health check works but authenticated calls fail.** Health endpoints
-  (`/<service>/healthz`) are unauthenticated by design; a 401 on a real endpoint
-  means the token is missing, expired, or out of scope.
+  (`/api/v1/<domain>/healthz`) are unauthenticated by design; a 401 on a real
+  endpoint means the token is missing, expired, or out of scope.
 
 Next: [Operations](../operations/index.md) for day-2 runbooks.

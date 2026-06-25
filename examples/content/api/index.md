@@ -13,21 +13,21 @@ services. In the live reference deployment the gateway is at
 
 ## Calling the gateway
 
-Each service lives under its own path prefix. The shape is:
+Each public domain lives under a versioned gateway path. The shape is:
 
 ```
-https://api.abualruz.com/<service>/<resource>
+https://api.abualruz.com/api/v1/<domain>/<resource>
 ```
 
 For example, the identity service health check:
 
 ```bash
-curl -i https://api.abualruz.com/identity/healthz
+curl -i https://api.abualruz.com/api/v1/identity/healthz
 # HTTP/2 200
 ```
 
-Health endpoints (`/<service>/healthz`) are unauthenticated so you can probe
-liveness without a token. Everything else requires an OIDC access token.
+Health endpoints (`/api/v1/<domain>/healthz`) are unauthenticated so you can
+probe liveness without a token. Everything else requires an OIDC access token.
 
 ## Authentication
 
@@ -36,7 +36,7 @@ Code with PKCE flow. Acquire a token through the OIDC flow (see
 [Auth setup](../auth/index.md)), then send it on each request:
 
 ```bash
-curl https://api.abualruz.com/tenancy/tenants \
+curl https://api.abualruz.com/api/v1/tenancy \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
 
@@ -45,11 +45,11 @@ what a token may do.
 
 ## The service catalog
 
-The deployment runs around 60 backend services: the neutral core, the HealthStack
-overlay, and personal/business variants. A first set (commerce, orders, fleet,
-calendar, donation, site, automation, plugin-runtime) serves real seeded data
-through live read endpoints today; the rest are scaffolded and filling in along
-the roadmap. They group as follows.
+The current local reference stack runs 38 routed backend services behind the
+gateway and exposes 83 gateway domains. The source of truth is generated from
+`DOMAIN_ROUTE_MAP` in `tools/codegen/src/api-gateway-emit.ts`; the same map
+emits `ops/dev/local-stack/route-map.txt`, the Kubernetes ingress manifest, and
+the route-contract checker. They group as follows.
 
 ### Neutral core
 
@@ -57,17 +57,14 @@ Vertical-agnostic capability services, each under its own prefix. Examples:
 
 | Prefix | Capability |
 | --- | --- |
-| `/identity` | Authentication subjects, sessions, credentials |
-| `/tenancy` | Tenants, organizations, isolation boundaries |
-| `/party` | People and organizations as parties |
-| `/audit` | Tamper-evident audit trail |
-| `/notify` | Notifications across channels |
-| `/search` | Cross-domain search |
-| `/storage` | Object and file storage references |
-| `/calendar` | Scheduling and calendars |
-| `/tasks` | Work items and task management |
-| `/documents` | Document management |
-| `/commerce` | Commerce primitives |
+| `/api/v1/identity` | Authentication subjects, sessions, credentials |
+| `/api/v1/tenancy` | Tenants, organizations, isolation boundaries |
+| `/api/v1/audit` | Tamper-evident audit trail |
+| `/api/v1/notify` | Notifications across channels |
+| `/api/v1/storage` | Object and file storage references |
+| `/api/v1/calendar` | Scheduling and calendars |
+| `/api/v1/personal-tasks` | Work items and task management |
+| `/api/v1/commerce` | Commerce primitives |
 
 (The full set covers settings, reports, geospatial, fleet, sales, procurement,
 inventory, HR, CRM, accounting, e-sign, donation, event, integrations, and site.)
@@ -96,9 +93,11 @@ deprecation window.
 ## Generated reference
 
 A generated TypeScript API reference (TypeDoc) is produced at build time for the
-SDK and contract packages. Contract specifications (OpenAPI / AsyncAPI) are the
-source of truth for the wire format and are linked from the relevant service
-docs; TypeDoc documents the code-level API, not the wire contract.
+SDK and contract packages. Contract specifications are the source of truth for
+the wire format: OpenAPI / TypeSpec for HTTP and AsyncAPI for durable events.
+Service-local `specs/` directories hold those contracts, and SDK packages with
+`openapi-ts.config.ts` consume the published HTTP contracts. TypeDoc documents
+the code-level API, not the wire contract.
 
 Next: [Auth setup](../auth/index.md) for the OIDC flow,
 [Event contracts](../events/index.md) for the durable event surface, and

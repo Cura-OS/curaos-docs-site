@@ -39,9 +39,9 @@ A typical integration:
 1. **Authenticate.** Obtain an OIDC access token from Pocket-ID (Authorization
    Code + PKCE for interactive clients). See [Auth setup](../auth/index.md).
 
-2. **Read or write through the gateway.** Call the relevant service under its
-   path prefix at the API gateway (`https://api.abualruz.com/<service>/...`) with
-   the bearer token.
+2. **Read or write through the gateway.** Call the relevant domain under its
+   versioned API gateway path
+   (`https://api.abualruz.com/api/v1/<domain>/...`) with the bearer token.
 
 3. **React to events.** Subscribe to the durable event topics for the domains you
    care about, so your system reacts to changes without polling.

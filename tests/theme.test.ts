@@ -65,6 +65,16 @@ describe("theme emitter - parameterized, two distinct outputs", () => {
     expect(css).toContain("oklch(");
     expect(css).not.toMatch(/#000\b|#fff\b|#000000|#ffffff/);
   });
+
+  test("keeps hero primary CTA text on the on-primary token", () => {
+    const css = emitCss(DEFAULT_VARIANT);
+    expect(css).toContain(
+      ".md-typeset .hero-cta--primary,.md-typeset .hero-cta--primary:visited{background:var(--c-primary);color:var(--c-on-primary)}"
+    );
+    expect(css).toContain(
+      ".md-typeset .hero-cta--primary:hover,.md-typeset .hero-cta--primary:focus-visible{background:var(--c-primary-hover);color:var(--c-on-primary);transform:translateY(-1px)}"
+    );
+  });
 });
 
 describe("inline-SVG illustrations (the committed art, not a token spread)", () => {

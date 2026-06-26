@@ -73,7 +73,9 @@ theme:
 # design tokens (ui-kit tokens.json) so the docs read like the live apps. Bundled
 # into the static output (no remote fetch), so air-gap + the strict CSP hold.
 extra_css:
-  - stylesheets/extra.css
+  # Use the variant-specific stylesheet path in production so CDN/browser caches
+  # of the legacy generic extra.css cannot mask a regenerated skin.
+  - stylesheets/extra.aurora.css
 
 plugins:
   # Client-side lunr.js search index; works fully offline when the static

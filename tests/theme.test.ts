@@ -69,10 +69,10 @@ describe("theme emitter - parameterized, two distinct outputs", () => {
   test("keeps hero primary CTA text on the on-primary token", () => {
     const css = emitCss(DEFAULT_VARIANT);
     expect(css).toContain(
-      ".md-typeset .hero-cta--primary,.md-typeset .hero-cta--primary:visited{background:var(--c-primary);color:var(--c-on-primary)}"
+      ".md-typeset .hero-cta--primary,.md-typeset .hero-cta--primary:visited{background:var(--c-primary);color:var(--c-on-primary)!important}"
     );
     expect(css).toContain(
-      ".md-typeset .hero-cta--primary:hover,.md-typeset .hero-cta--primary:focus-visible{background:var(--c-primary-hover);color:var(--c-on-primary);transform:translateY(-1px)}"
+      ".md-typeset .hero-cta--primary:hover,.md-typeset .hero-cta--primary:focus-visible{background:var(--c-primary-hover);color:var(--c-on-primary)!important;transform:translateY(-1px)}"
     );
   });
 });

@@ -37,7 +37,7 @@ import {
   ICON_PATHS,
   BRAND_MARK_PATHS,
   SVG_FONT,
-} from "../design-tokens.ts";
+} from '../design-tokens.ts';
 
 /** Emit a `light-dark()` value from a ColorStop-bearing palette key. */
 function ld(p: Palette, key: keyof Palette): string {
@@ -59,31 +59,31 @@ function fontFaces(): string {
     `@font-face{font-family:"JetBrains Mono Variable";font-style:normal;font-weight:100 800;font-display:swap;src:url("${f.monoVariable}") format("woff2-variations")}`,
     `@font-face{font-family:"IBM Plex Sans Arabic";font-style:normal;font-weight:400;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF;src:url("${f.arabic400}") format("woff2")}`,
     `@font-face{font-family:"IBM Plex Sans Arabic";font-style:normal;font-weight:600;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF;src:url("${f.arabic600}") format("woff2")}`,
-  ].join("\n");
+  ].join('\n');
 }
 
 /** Map the palette + ladders onto a single :root token block (light + dark). */
 function tokenRoot(p: Palette): string {
   return `:root{
   color-scheme:light dark;
-  --c-bg:${ld(p, "bg")};
-  --c-bg-elev:${ld(p, "bgElev")};
-  --c-surface:${ld(p, "surface")};
-  --c-surface-raised:${ld(p, "surfaceRaised")};
-  --c-fg:${ld(p, "fg")};
-  --c-fg-muted:${ld(p, "fgMuted")};
-  --c-fg-subtle:${ld(p, "fgSubtle")};
-  --c-border:${ld(p, "border")};
-  --c-border-strong:${ld(p, "borderStrong")};
-  --c-primary:${ld(p, "primary")};
-  --c-primary-hover:${ld(p, "primaryHover")};
-  --c-primary-quiet:${ld(p, "primaryQuiet")};
-  --c-primary-text:${ld(p, "primaryText")};
-  --c-on-primary:${ld(p, "onPrimary")};
-  --c-secondary:${ld(p, "secondary")};
-  --c-secondary-quiet:${ld(p, "secondaryQuiet")};
-  --c-ring:${ld(p, "ring")};
-  --c-positive:${ld(p, "positive")};
+  --c-bg:${ld(p, 'bg')};
+  --c-bg-elev:${ld(p, 'bgElev')};
+  --c-surface:${ld(p, 'surface')};
+  --c-surface-raised:${ld(p, 'surfaceRaised')};
+  --c-fg:${ld(p, 'fg')};
+  --c-fg-muted:${ld(p, 'fgMuted')};
+  --c-fg-subtle:${ld(p, 'fgSubtle')};
+  --c-border:${ld(p, 'border')};
+  --c-border-strong:${ld(p, 'borderStrong')};
+  --c-primary:${ld(p, 'primary')};
+  --c-primary-hover:${ld(p, 'primaryHover')};
+  --c-primary-quiet:${ld(p, 'primaryQuiet')};
+  --c-primary-text:${ld(p, 'primaryText')};
+  --c-on-primary:${ld(p, 'onPrimary')};
+  --c-secondary:${ld(p, 'secondary')};
+  --c-secondary-quiet:${ld(p, 'secondaryQuiet')};
+  --c-ring:${ld(p, 'ring')};
+  --c-positive:${ld(p, 'positive')};
   --radius-sm:${RADIUS.sm}px;
   --radius-md:${RADIUS.md}px;
   --radius-lg:${RADIUS.lg}px;
@@ -310,8 +310,8 @@ export function emitCss(variantKey: string): string {
     tokenRoot(v.palette),
     materialBridge(),
     chromeAndHome(),
-    "",
-  ].join("\n");
+    '',
+  ].join('\n');
 }
 
 // ---- Inline SVG illustrations (shared icon library + two compositions) ------
@@ -326,7 +326,7 @@ export function brandMark(): string {
 }
 
 const esc = (s: string): string =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /**
  * The HERO illustration: a depth composition of opt-in overlay tiles floating
@@ -360,9 +360,8 @@ export function heroSvg(opts: {
     .map((label, i) => {
       const x = startX + i * (tileW + gap);
       const midX = x + tileW / 2;
-      const cls = i % 2 === 0 ? "float-a" : "float-b";
-      const arrow =
-        `<line x1="${midX}" y1="${tileY + tileH + 6}" x2="${midX}" y2="${coreY - 8}" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#cura-arr)"/>`;
+      const cls = i % 2 === 0 ? 'float-a' : 'float-b';
+      const arrow = `<line x1="${midX}" y1="${tileY + tileH + 6}" x2="${midX}" y2="${coreY - 8}" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#cura-arr)"/>`;
       const tile =
         `<g class="${cls}">` +
         `<rect x="${x}" y="${tileY}" width="${tileW}" height="${tileH}" rx="14" fill="var(--c-secondary-quiet)" stroke="var(--c-secondary)" stroke-width="1.6"/>` +
@@ -370,7 +369,7 @@ export function heroSvg(opts: {
         `</g>`;
       return arrow + tile;
     })
-    .join("");
+    .join('');
 
   return (
     `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opts.label)}" preserveAspectRatio="xMidYMid meet">` +
@@ -426,7 +425,7 @@ export function architectureSvg(opts: {
         `<text x="${midX.toFixed(1)}" y="${ovY + ovH / 2 + 5}" text-anchor="middle" font-size="14" font-weight="600" font-family="${SVG_FONT}" fill="var(--c-secondary)">${esc(label)}</text></g>`
       );
     })
-    .join("");
+    .join('');
 
   return (
     `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opts.caption)}" preserveAspectRatio="xMidYMid meet">` +

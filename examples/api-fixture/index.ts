@@ -8,7 +8,7 @@
  */
 
 /** A CuraOS deployment profile. */
-export type DeploymentProfile = "cloud" | "on-prem" | "hybrid" | "air-gap";
+export type DeploymentProfile = 'cloud' | 'on-prem' | 'hybrid' | 'air-gap';
 
 /** Options describing how a tenant's documentation site is served. */
 export interface DocsHostingOptions {
@@ -30,5 +30,5 @@ export interface DocsHostingOptions {
  * ```
  */
 export function isAirGapSafe(options: DocsHostingOptions): boolean {
-  return options.profile === "air-gap" && options.offline;
+  return options.profile === 'air-gap' && options.offline;
 }

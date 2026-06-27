@@ -47,8 +47,8 @@ any app subdomain above and complete the OIDC sign-in: a successful redirect
 through Pocket-ID and back into a CuraOS session exercises the gateway, the
 identity broker, and the app together.
 
-The current local reference stack routes 38 services through the gateway and
-exposes 83 generated `/api/v1` domains. See the
+The current local reference stack routes 40 services through the gateway and
+exposes 91 generated `/api/v1` domains. See the
 [API reference](../api/index.md) for the path convention and the
 [Services catalogue](../services/index.md) for services, ports, and domains.
 

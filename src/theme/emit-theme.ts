@@ -13,15 +13,15 @@
 // tests can diff them. Switching the active variant = `--variant aqua`; adding a
 // variant = a new entry in design-tokens THEME_VARIANTS (no edit here).
 
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { emitCss } from "./emit.ts";
-import { emitHomeTemplate, emitMainTemplate } from "./home.ts";
-import { THEME_VARIANTS, DEFAULT_VARIANT } from "../design-tokens.ts";
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { emitCss } from './emit.ts';
+import { emitHomeTemplate, emitMainTemplate } from './home.ts';
+import { THEME_VARIANTS, DEFAULT_VARIANT } from '../design-tokens.ts';
 
-const REPO = join(import.meta.dir, "..", "..");
-const STYLES = join(REPO, "examples", "content", "stylesheets");
-const OVERRIDES = join(REPO, "overrides");
+const REPO = join(import.meta.dir, '..', '..');
+const STYLES = join(REPO, 'examples', 'content', 'stylesheets');
+const OVERRIDES = join(REPO, 'overrides');
 
 function flag(name: string, fallback: string): string {
   const eq = process.argv.find((a) => a.startsWith(`--${name}=`));
@@ -37,7 +37,7 @@ export function emitAll(activeVariant: string): string[] {
   const written: string[] = [];
 
   // The ACTIVE skin (what mkdocs loads via extra_css).
-  const active = join(STYLES, "extra.css");
+  const active = join(STYLES, 'extra.css');
   writeFileSync(active, emitCss(activeVariant));
   written.push(active);
 
@@ -49,11 +49,11 @@ export function emitAll(activeVariant: string): string[] {
   }
 
   // Generated Material override templates (the real hero landing).
-  const mainHtml = join(OVERRIDES, "main.html");
+  const mainHtml = join(OVERRIDES, 'main.html');
   writeFileSync(mainHtml, emitMainTemplate());
   written.push(mainHtml);
 
-  const homeHtml = join(OVERRIDES, "home.html");
+  const homeHtml = join(OVERRIDES, 'home.html');
   writeFileSync(homeHtml, emitHomeTemplate());
   written.push(homeHtml);
 
@@ -61,17 +61,17 @@ export function emitAll(activeVariant: string): string[] {
 }
 
 if (import.meta.main) {
-  const variant = flag("variant", DEFAULT_VARIANT);
+  const variant = flag('variant', DEFAULT_VARIANT);
   if (!THEME_VARIANTS[variant]) {
     process.stderr.write(
-      `unknown variant: ${variant} (known: ${Object.keys(THEME_VARIANTS).join(", ")})\n`,
+      `unknown variant: ${variant} (known: ${Object.keys(THEME_VARIANTS).join(', ')})\n`,
     );
     process.exit(1);
   }
   const written = emitAll(variant);
   process.stdout.write(
     `emit:theme: variant=${variant}, wrote ${written.length} files:\n` +
-      written.map((w) => `  ${w.replace(REPO + "/", "")}`).join("\n") +
-      "\n",
+      written.map((w) => `  ${w.replace(REPO + '/', '')}`).join('\n') +
+      '\n',
   );
 }

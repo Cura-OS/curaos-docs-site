@@ -13,7 +13,7 @@
 // (hero_headline, hero_sub, hero_eyebrow, stats[], etc.) and reference it with
 // {{ page.meta.* }} so the template carries layout, not copy.
 
-import { heroSvg, architectureSvg, svgIcon, brandMark } from "./emit.ts";
+import { heroSvg, architectureSvg, svgIcon, brandMark } from './emit.ts';
 
 const CHECK =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg>';
@@ -26,8 +26,8 @@ const CLOCK =
  * Kept here as the generated default; the template falls back to these when the
  * page front matter does not override them.
  */
-const DEFAULT_OVERLAYS = ["Health", "Education", "ERP"] as const;
-const DEFAULT_CORE = "Neutral core";
+const DEFAULT_OVERLAYS = ['Health', 'Education', 'ERP'] as const;
+const DEFAULT_CORE = 'Neutral core';
 
 /** Build the generated Jinja home template body. */
 export function emitHomeTemplate(): string {
@@ -35,13 +35,13 @@ export function emitHomeTemplate(): string {
     coreLabel: DEFAULT_CORE,
     overlays: DEFAULT_OVERLAYS,
     label:
-      "CuraOS architecture: opt-in vertical overlays (Health, Education, ERP) depend downward on one neutral core foundation.",
+      'CuraOS architecture: opt-in vertical overlays (Health, Education, ERP) depend downward on one neutral core foundation.',
   });
   const arch = architectureSvg({
     coreLabel: DEFAULT_CORE,
     overlays: DEFAULT_OVERLAYS,
     caption:
-      "Vertical overlays extend the neutral core and depend on it; the dependency never reverses.",
+      'Vertical overlays extend the neutral core and depend on it; the dependency never reverses.',
   });
 
   // The start-here cards: first is a wide feature lede, rest compact. Icons from
@@ -54,48 +54,48 @@ export function emitHomeTemplate(): string {
     feature?: boolean;
   }> = [
     {
-      icon: "compass",
-      title: "Getting started",
+      icon: 'compass',
+      title: 'Getting started',
       blurb:
-        "The short tour: the core concepts, the live surfaces, and your first steps through the platform.",
-      href: "getting-started/",
+        'The short tour: the core concepts, the live surfaces, and your first steps through the platform.',
+      href: 'getting-started/',
       feature: true,
     },
     {
-      icon: "server",
-      title: "Install (self-host)",
-      blurb: "Deploy on Kubernetes with CNPG, Valkey, and an ingress controller.",
-      href: "install/",
+      icon: 'server',
+      title: 'Install (self-host)',
+      blurb: 'Deploy on Kubernetes with CNPG, Valkey, and an ingress controller.',
+      href: 'install/',
     },
     {
-      icon: "layers",
-      title: "Architecture",
-      blurb: "The layered model, the charter principles, and the real stack.",
-      href: "architecture/",
+      icon: 'layers',
+      title: 'Architecture',
+      blurb: 'The layered model, the charter principles, and the real stack.',
+      href: 'architecture/',
     },
     {
-      icon: "puzzle",
-      title: "Apps guide",
-      blurb: "What each app does and where to find it across the suites.",
-      href: "apps/",
+      icon: 'puzzle',
+      title: 'Apps guide',
+      blurb: 'What each app does and where to find it across the suites.',
+      href: 'apps/',
     },
     {
-      icon: "network",
-      title: "API reference",
-      blurb: "The service catalog and how to call the API gateway.",
-      href: "api/",
+      icon: 'network',
+      title: 'API reference',
+      blurb: 'The service catalog and how to call the API gateway.',
+      href: 'api/',
     },
     {
-      icon: "key",
-      title: "Auth setup",
-      blurb: "Pocket-ID OIDC and the Authorization Code with PKCE flow.",
-      href: "auth/",
+      icon: 'key',
+      title: 'Auth setup',
+      blurb: 'Pocket-ID OIDC and the Authorization Code with PKCE flow.',
+      href: 'auth/',
     },
   ];
 
   const cardHtml = cards
     .map((c) => {
-      const cls = c.feature ? "home-card is-feature" : "home-card";
+      const cls = c.feature ? 'home-card is-feature' : 'home-card';
       return (
         `      <a class="${cls}" href="{{ '${c.href}' | url }}">\n` +
         `        ${svgIcon(c.icon)}\n` +
@@ -107,7 +107,7 @@ export function emitHomeTemplate(): string {
         `      </a>`
       );
     })
-    .join("\n");
+    .join('\n');
 
   // The whole template. {% block ... %} hooks into Material's base.html via
   // main.html. Authored copy comes from page.meta with sensible literal

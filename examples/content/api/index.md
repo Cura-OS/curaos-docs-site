@@ -45,8 +45,8 @@ what a token may do.
 
 ## The service catalog
 
-The current local reference stack runs 38 routed backend services behind the
-gateway and exposes 83 gateway domains. The source of truth is generated from
+The current local reference stack runs 40 routed backend services behind the
+gateway and exposes 91 gateway domains. The source of truth is generated from
 `DOMAIN_ROUTE_MAP` in `tools/codegen/src/api-gateway-emit.ts`; the same map
 emits `ops/dev/local-stack/route-map.txt`, the Kubernetes ingress manifest, and
 the route-contract checker. They group as follows.

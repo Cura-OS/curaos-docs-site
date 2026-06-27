@@ -9,8 +9,8 @@ glance.
 !!! note "Repository versus deployment"
     The platform repository contains 93 backend service directories across the
     neutral core, the HealthStack overlay, the EducationStack overlay, and the
-    personal and business variants. The current local reference stack routes 38
-    services through the gateway and exposes 83 gateway domains. The source of
+    personal and business variants. The current local reference stack routes 40
+    services through the gateway and exposes 91 gateway domains. The source of
     truth is
     generated from `DOMAIN_ROUTE_MAP` and rendered to
     `ops/dev/local-stack/route-map.txt` plus the Kubernetes ingress manifest.

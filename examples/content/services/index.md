@@ -138,7 +138,7 @@ Where a domain's subject owner genuinely differs, a `personal-*` and a
 
 The current routed local stack includes the variants listed below. Other service
 directories exist in the repository for planned or scaffolded domain depth, but
-they are not part of the 38-service local reference gateway until they appear in
+they are not part of the 40-service local reference gateway until they appear in
 `ops/dev/local-stack/svc-ports.txt` and `route-map.txt`.
 
 | Domain | Personal | Business |

@@ -1,6 +1,6 @@
 # Apps guide
 
-CuraOS tracks 22 frontend app projects: 20 web apps plus 2 Expo mobile apps.
+CuraOS tracks 24 frontend app projects on a shared design system, three of which also ship Expo mobile targets.
 The local real-data render gate exercises the 20 web apps, and the public
 reference deployment exposes 19 vanity web hosts today. The remaining web app,
 Builder Studio, is deployed as a cluster app without a public vanity host. The

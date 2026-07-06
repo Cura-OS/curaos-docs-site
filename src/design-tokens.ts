@@ -78,26 +78,26 @@ export interface ThemeVariant {
 // Primary = indigo-violet (oklch ~0.55 0.19 282). Secondary = warm coral
 // (oklch ~0.68 0.17 32) used ONLY for the overlay nodes + a single accent.
 // Neutrals are tinted toward the plum hue (hue ~285, very low chroma) so the
-// whole surface reads as a deliberate cool-plum system, never the generic
-// teal-on-white / slate look the critique rejected.
+// whole surface reads as the approved CuraOS navy+gold brand identity, never
+// the generic teal-on-white / slate look the critique rejected.
 const AURORA: Palette = {
-  primary: { light: "oklch(0.52 0.20 283)", dark: "oklch(0.74 0.16 282)" },
-  primaryHover: { light: "oklch(0.45 0.21 283)", dark: "oklch(0.82 0.13 282)" },
-  primaryQuiet: { light: "oklch(0.96 0.025 285)", dark: "oklch(0.27 0.06 284)" },
-  primaryText: { light: "oklch(0.45 0.20 283)", dark: "oklch(0.86 0.10 282)" },
-  onPrimary: { light: "oklch(0.99 0.005 285)", dark: "oklch(0.18 0.03 284)" },
-  secondary: { light: "oklch(0.60 0.17 33)", dark: "oklch(0.74 0.15 38)" },
-  secondaryQuiet: { light: "oklch(0.96 0.03 45)", dark: "oklch(0.27 0.05 35)" },
-  bg: { light: "oklch(0.985 0.004 285)", dark: "oklch(0.165 0.012 285)" },
-  bgElev: { light: "oklch(0.965 0.006 285)", dark: "oklch(0.205 0.014 285)" },
-  surface: { light: "oklch(1 0 0)", dark: "oklch(0.215 0.015 285)" },
-  surfaceRaised: { light: "oklch(1 0 0)", dark: "oklch(0.255 0.018 285)" },
-  fg: { light: "oklch(0.24 0.02 285)", dark: "oklch(0.94 0.006 285)" },
-  fgMuted: { light: "oklch(0.46 0.02 285)", dark: "oklch(0.72 0.012 285)" },
-  fgSubtle: { light: "oklch(0.58 0.018 285)", dark: "oklch(0.60 0.012 285)" },
-  border: { light: "oklch(0.91 0.008 285)", dark: "oklch(0.30 0.016 285)" },
-  borderStrong: { light: "oklch(0.84 0.012 285)", dark: "oklch(0.38 0.02 285)" },
-  ring: { light: "oklch(0.58 0.20 283)", dark: "oklch(0.74 0.16 282)" },
+  primary: { light: "oklch(0.40 0.15 264)", dark: "oklch(0.70 0.14 264)" },
+  primaryHover: { light: "oklch(0.35 0.16 264)", dark: "oklch(0.78 0.11 264)" },
+  primaryQuiet: { light: "oklch(0.96 0.02 264)", dark: "oklch(0.25 0.05 264)" },
+  primaryText: { light: "oklch(0.35 0.15 264)", dark: "oklch(0.82 0.09 264)" },
+  onPrimary: { light: "oklch(0.99 0.005 264)", dark: "oklch(0.16 0.03 264)" },
+  secondary: { light: "oklch(0.72 0.16 80)", dark: "oklch(0.78 0.14 85)" },
+  secondaryQuiet: { light: "oklch(0.96 0.03 80)", dark: "oklch(0.25 0.04 85)" },
+  bg: { light: "oklch(0.985 0.004 264)", dark: "oklch(0.165 0.012 264)" },
+  bgElev: { light: "oklch(0.965 0.006 264)", dark: "oklch(0.205 0.014 264)" },
+  surface: { light: "oklch(1 0 0)", dark: "oklch(0.215 0.015 264)" },
+  surfaceRaised: { light: "oklch(1 0 0)", dark: "oklch(0.255 0.018 264)" },
+  fg: { light: "oklch(0.24 0.02 264)", dark: "oklch(0.94 0.006 264)" },
+  fgMuted: { light: "oklch(0.46 0.02 264)", dark: "oklch(0.72 0.012 264)" },
+  fgSubtle: { light: "oklch(0.58 0.018 264)", dark: "oklch(0.60 0.012 264)" },
+  border: { light: "oklch(0.91 0.008 264)", dark: "oklch(0.30 0.016 264)" },
+  borderStrong: { light: "oklch(0.84 0.012 264)", dark: "oklch(0.38 0.02 264)" },
+  ring: { light: "oklch(0.40 0.15 264)", dark: "oklch(0.70 0.14 264)" },
   positive: { light: "oklch(0.55 0.13 155)", dark: "oklch(0.74 0.14 158)" },
 };
 

@@ -23,8 +23,6 @@ Part of the CuraOS (Care Oriented Stack) platform. CuraOS public documentation s
 The docs site publishes safe adoption material, concepts, and public guides while keeping internal roadmaps, generators, and strategy docs private.
 
 <!-- curaos:keep -->
-<!-- Add runnable repo-specific setup, local URLs, required env vars, and smoke checks here.
-     This section survives re-emit. -->
 <!-- /curaos:keep -->
 
 ---
@@ -38,8 +36,6 @@ bun run dev
 ```
 
 <!-- curaos:keep -->
-<!-- Add architecture notes, events, APIs, data ownership, and dependency diagrams here.
-     This section survives re-emit. -->
 <!-- /curaos:keep -->
 
 ---
@@ -50,7 +46,8 @@ bun run dev
 - Safe documentation boundary for open-source exposure
 - Canonical links back to public website and examples
 
-
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
 
 ---
 
@@ -68,7 +65,8 @@ bun run dev
 - Publishes only reviewed adoption content
 - Carries public-open license and community health files
 
-
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
 
 ---
 
@@ -78,7 +76,8 @@ See [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com) (interim).
 
 See the public documentation at [docs.curaos.abualruz.com](https://docs.curaos.abualruz.com).
 
-
+<!-- curaos:keep -->
+<!-- /curaos:keep -->
 
 ---
 

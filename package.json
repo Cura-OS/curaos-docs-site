@@ -1,7 +1,7 @@
 {
   "name": "curaos-docs-site",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "CuraOS documentation site: MkDocs Material (external/offline/air-gap) + Backstage TechDocs (internal) + TypeDoc API docs",
   "type": "module",
   "engines": {
@@ -25,5 +25,5 @@
     "typedoc-plugin-markdown": "4.12.0",
     "typescript": "5.7.2"
   },
-  "license": "LicenseRef-CuraOS-Proprietary"
+  "license": "Apache-2.0"
 }

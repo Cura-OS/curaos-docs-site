@@ -17,13 +17,15 @@
     "build:external": "bash scripts/build-external.sh",
     "build:techdocs": "bash scripts/build-techdocs.sh",
     "build:api": "bash scripts/build-api-docs.sh",
+    "build:public-api": "bun scripts/public-api-docs.ts",
     "build": "bash scripts/build-all.sh"
   },
   "devDependencies": {
     "@types/bun": "1.1.14",
     "typedoc": "0.28.19",
     "typedoc-plugin-markdown": "4.12.0",
-    "typescript": "5.7.2"
+    "typescript": "5.7.2",
+    "yaml": "2.9.0"
   },
   "license": "Apache-2.0"
 }

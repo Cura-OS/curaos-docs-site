@@ -1,0 +1,10 @@
+asyncapi: 3.0.0
+info:
+  title: public-thing-service Events
+  version: 1.0.0
+  description: Public thing lifecycle events.
+channels:
+  thingCreated:
+    address: curaos.core.thing.created.v1
+    messages:
+      ThingCreated: {}

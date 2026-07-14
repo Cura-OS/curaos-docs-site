@@ -42,6 +42,12 @@ bun run typecheck
 step "5 API docs (TypeDoc → Markdown)"
 bash scripts/build-api-docs.sh
 
+step "5b public API docs (OpenAPI + AsyncAPI, DENY-BY-DEFAULT tiering)"
+# Exercises the deny-by-default framework against the in-repo fixture: the
+# public-tier surface is emitted, the internal surface is denied. The real
+# public list is UD-8-gated (config/api-tiers.json publishes nothing yet).
+bun scripts/public-api-docs.ts
+
 step "6 external static site (MkDocs Material strict)"
 if command -v mkdocs >/dev/null 2>&1; then
   bash scripts/build-external.sh --api-dir .build-workspace/api

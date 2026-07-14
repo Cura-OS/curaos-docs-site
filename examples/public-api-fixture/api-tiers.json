@@ -1,0 +1,6 @@
+{
+  "note": "Fixture tier config exercising DENY-BY-DEFAULT. public-thing-service is public in both tiers; secret-admin-service is absent, so it is denied by default and must NOT appear in generated output.",
+  "defaultTier": "internal",
+  "http": { "public": ["public-thing-service"] },
+  "events": { "public": ["public-thing-service"] }
+}

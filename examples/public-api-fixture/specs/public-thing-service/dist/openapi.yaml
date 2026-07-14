@@ -1,0 +1,20 @@
+openapi: 3.1.0
+info:
+  title: public-thing-service
+  version: 1.2.0
+  description: Public thing surface, opted into the public tier.
+paths:
+  /things/health:
+    get:
+      operationId: Things_health
+      summary: Liveness probe.
+      responses:
+        '200':
+          description: ok
+  /things:
+    get:
+      operationId: Things_list
+      summary: List public things.
+      responses:
+        '200':
+          description: ok

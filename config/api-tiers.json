@@ -1,0 +1,15 @@
+{
+  "note": "DENY-BY-DEFAULT public API docs tiering (ADR-0262, V12-GA-SURFACE-API-DOCS). Any service surface NOT explicitly listed under an http.public or events.public allowlist is INTERNAL and is NEVER published to the public docs site. Internal, admin, and PHI surfaces stay OUT by construction, so there is no blueprint-exposure risk from a forgotten flag: the default is deny. The public arrays below are UD-8-gated and intentionally EMPTY: no service surface is published until UD-8 approves the final public list. Widen ONLY by adding a service key to http.public or events.public after that decision. Candidate keys are the backend service directory names (for AsyncAPI) and the OpenAPI info.title slug (for HTTP), e.g. tenancy-core-service.",
+  "defaultTier": "internal",
+  "http": {
+    "public": []
+  },
+  "events": {
+    "public": []
+  },
+  "_ud8_candidates": {
+    "_note": "Non-active. Reference-only starter set for the UD-8 decision. Nothing here is published; a key must be moved into http.public / events.public to expose it. Health and status probes are the least sensitive candidates.",
+    "http": ["tenancy-core-service", "party-core-service"],
+    "events": ["tenancy-core-service"]
+  }
+}

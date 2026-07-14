@@ -1,0 +1,13 @@
+openapi: 3.1.0
+info:
+  title: secret-admin-service
+  version: 9.9.9
+  description: INTERNAL admin surface. Must never be published.
+paths:
+  /admin/secrets:
+    get:
+      operationId: Admin_dumpSecrets
+      summary: Internal only.
+      responses:
+        '200':
+          description: ok

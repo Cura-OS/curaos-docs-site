@@ -30,9 +30,9 @@ describe("isPublic (deny-by-default)", () => {
 });
 
 describe("loadTierConfig fails closed", () => {
-  test("garbled allowlists collapse to empty (deny all)", () => {
+  test("garbled allowlists collapse to empty (deny all)", async () => {
     const p = join(import.meta.dir, "_bad-tier.json");
-    Bun.write(p, JSON.stringify({ defaultTier: "internal", http: "oops", events: null }));
+    await Bun.write(p, JSON.stringify({ defaultTier: "internal", http: "oops", events: null }));
     const cfg = loadTierConfig(p);
     expect(cfg.http.public).toEqual([]);
     expect(cfg.events.public).toEqual([]);

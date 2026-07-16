@@ -167,20 +167,35 @@ function indexPage(kind: "http" | "events", version: string, published: Discover
 }
 
 // Existing version dirs under a kind root (dirs whose name is not "index.md").
-// Newest-first (descending) so the switcher lists the current version on top.
-function listVersions(kindRoot: string): string[] {
+function versionDirs(kindRoot: string): string[] {
   if (!existsSync(kindRoot)) return [];
-  return readdirSync(kindRoot)
-    .filter((name) => statSync(join(kindRoot, name)).isDirectory())
-    .sort()
-    .reverse();
+  return readdirSync(kindRoot).filter((name) =>
+    statSync(join(kindRoot, name)).isDirectory()
+  );
+}
+
+// Newest-first (descending), numeric/semver-aware. A plain lexicographic
+// .sort().reverse() mislabels once minors go double-digit: 'v1.10' sorts
+// before 'v1.9', so the switcher would mark the wrong version (current).
+// Strip the leading 'v', split on '.', compare each component numerically.
+export function listVersions(names: string[]): string[] {
+  return [...names].sort((a, b) => {
+    const pa = a.replace(/^v/, "").split(".").map(Number);
+    const pb = b.replace(/^v/, "").split(".").map(Number);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+      const da = pa[i] ?? 0;
+      const db = pb[i] ?? 0;
+      if (da !== db) return db - da; // descending
+    }
+    return 0;
+  });
 }
 
 // Version switcher (lives at <kind>/index.md): the real "version switcher"
 // deliverable. It links to every published API version present on disk. How MANY
 // versions are retained is the UD-8 retention pick; the switcher covers whatever
 // is emitted, so retention is a build-input, not a code change.
-function switcherPage(kind: "http" | "events", versions: string[]): string {
+export function switcherPage(kind: "http" | "events", versions: string[]): string {
   const title = kind === "http" ? "HTTP API reference" : "Event contracts";
   const lines = [`# ${title}`, "", "Select an API version:", ""];
   if (versions.length === 0) {
@@ -249,8 +264,8 @@ export function generate(
   );
   // Rebuild the switchers by scanning every version dir present (this build's +
   // any prior versions kept in outDir).
-  writeFileSync(join(outDir, "api", "index.md"), switcherPage("http", listVersions(join(outDir, "api"))));
-  writeFileSync(join(outDir, "events", "index.md"), switcherPage("events", listVersions(join(outDir, "events"))));
+  writeFileSync(join(outDir, "api", "index.md"), switcherPage("http", listVersions(versionDirs(join(outDir, "api")))));
+  writeFileSync(join(outDir, "events", "index.md"), switcherPage("events", listVersions(versionDirs(join(outDir, "events")))));
   writeFileSync(join(outDir, "index.md"), topIndexPage());
   return { published, denied };
 }

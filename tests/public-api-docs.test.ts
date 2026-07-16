@@ -12,6 +12,8 @@ import {
   renderOpenApi,
   renderAsyncApi,
   generate,
+  listVersions,
+  switcherPage,
   type TierConfig,
 } from "../scripts/public-api-docs.ts";
 
@@ -118,6 +120,14 @@ describe("generate (end-to-end deny-by-default, versioned)", () => {
     expect(iCur).toBeGreaterThanOrEqual(0);
     expect(iPrev).toBeGreaterThan(iCur); // newest listed first
     rmSync(out, { recursive: true, force: true });
+  });
+
+  test("listVersions is numeric-aware: v1.10 outranks v1.9 (not lexicographic)", () => {
+    expect(listVersions(["v1.2", "v1.9", "v1.10"])).toEqual(["v1.10", "v1.9", "v1.2"]);
+    // switcher marks the true-latest current, not the lexicographic max.
+    const page = switcherPage("http", listVersions(["v1.2", "v1.9", "v1.10"]));
+    expect(page).toContain("[v1.10 (current)](v1.10/index.md)");
+    expect(page).not.toContain("v1.9 (current)");
   });
 
   test("empty allowlist publishes nothing (deny all)", () => {

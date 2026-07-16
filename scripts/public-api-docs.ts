@@ -141,9 +141,11 @@ export function renderAsyncApi(doc: any): string {
   return lines.join("\n") + "\n";
 }
 
-function indexPage(kind: "http" | "events", published: DiscoveredSpec[]): string {
+// Per-version surface index (lives at <kind>/<version>/index.md). Links point
+// down into services/<key>.md, relative to this version dir.
+function indexPage(kind: "http" | "events", version: string, published: DiscoveredSpec[]): string {
   const title = kind === "http" ? "Public HTTP API reference" : "Public event contracts";
-  const lines = [`# ${title}`, ""];
+  const lines = [`# ${title} (${version})`, ""];
   lines.push(
     "Generated from the services' " + (kind === "http" ? "OpenAPI" : "AsyncAPI") + " specs.",
     "DENY-BY-DEFAULT: only surfaces in the public tier of `config/api-tiers.json` appear here.",
@@ -159,19 +161,85 @@ function indexPage(kind: "http" | "events", published: DiscoveredSpec[]): string
     return lines.join("\n") + "\n";
   }
   lines.push("## Published surfaces", "");
-  for (const s of published) lines.push(`- [${s.key}](${s.key}.md)`);
+  for (const s of published) lines.push(`- [${s.key}](services/${s.key}.md)`);
   lines.push("");
   return lines.join("\n") + "\n";
 }
 
-export function generate(specsRoot: string, outDir: string, cfg: TierConfig): GenResult {
+// Existing version dirs under a kind root (dirs whose name is not "index.md").
+function versionDirs(kindRoot: string): string[] {
+  if (!existsSync(kindRoot)) return [];
+  return readdirSync(kindRoot).filter((name) =>
+    statSync(join(kindRoot, name)).isDirectory()
+  );
+}
+
+// Newest-first (descending), numeric/semver-aware. A plain lexicographic
+// .sort().reverse() mislabels once minors go double-digit: 'v1.10' sorts
+// before 'v1.9', so the switcher would mark the wrong version (current).
+// Strip the leading 'v', split on '.', compare each component numerically.
+export function listVersions(names: string[]): string[] {
+  return [...names].sort((a, b) => {
+    const pa = a.replace(/^v/, "").split(".").map(Number);
+    const pb = b.replace(/^v/, "").split(".").map(Number);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+      const da = pa[i] ?? 0;
+      const db = pb[i] ?? 0;
+      if (da !== db) return db - da; // descending
+    }
+    return 0;
+  });
+}
+
+// Version switcher (lives at <kind>/index.md): the real "version switcher"
+// deliverable. It links to every published API version present on disk. How MANY
+// versions are retained is the UD-8 retention pick; the switcher covers whatever
+// is emitted, so retention is a build-input, not a code change.
+export function switcherPage(kind: "http" | "events", versions: string[]): string {
+  const title = kind === "http" ? "HTTP API reference" : "Event contracts";
+  const lines = [`# ${title}`, "", "Select an API version:", ""];
+  if (versions.length === 0) {
+    lines.push("_No versions published yet._", "");
+    return lines.join("\n") + "\n";
+  }
+  versions.forEach((v, i) => {
+    const label = i === 0 ? `${v} (current)` : v;
+    lines.push(`- [${label}](${v}/index.md)`);
+  });
+  lines.push("");
+  return lines.join("\n") + "\n";
+}
+
+function topIndexPage(): string {
+  return [
+    "# API and event reference",
+    "",
+    "Versioned, generated from the CuraOS contract pipeline (TypeSpec -> OpenAPI /",
+    "AsyncAPI). Reference surfaces are DENY-BY-DEFAULT: a service appears only when",
+    "its key is in the public tier of `config/api-tiers.json`.",
+    "",
+    "- [HTTP API reference](api/index.md)",
+    "- [Event contracts](events/index.md)",
+    "",
+  ].join("\n") + "\n";
+}
+
+export function generate(
+  specsRoot: string,
+  outDir: string,
+  cfg: TierConfig,
+  apiVersion = "v1.2",
+): GenResult {
   const specs = discoverSpecs(specsRoot);
   const published: DiscoveredSpec[] = [];
   const denied: DiscoveredSpec[] = [];
-  const httpDir = join(outDir, "api", "services");
-  const eventsDir = join(outDir, "events", "services");
-  rmSync(join(outDir, "api", "services"), { recursive: true, force: true });
-  rmSync(join(outDir, "events", "services"), { recursive: true, force: true });
+  const httpDir = join(outDir, "api", apiVersion, "services");
+  const eventsDir = join(outDir, "events", apiVersion, "services");
+  // Idempotent per version: clear only THIS version's subtree so a later build of
+  // another version publishes alongside it (multi-version switcher) rather than
+  // wiping it.
+  rmSync(join(outDir, "api", apiVersion), { recursive: true, force: true });
+  rmSync(join(outDir, "events", apiVersion), { recursive: true, force: true });
   mkdirSync(httpDir, { recursive: true });
   mkdirSync(eventsDir, { recursive: true });
 
@@ -186,8 +254,19 @@ export function generate(specsRoot: string, outDir: string, cfg: TierConfig): Ge
     writeFileSync(join(dir, `${spec.key}.md`), md);
     published.push(spec);
   }
-  writeFileSync(join(httpDir, "index.md"), indexPage("http", published.filter((s) => s.kind === "http")));
-  writeFileSync(join(eventsDir, "index.md"), indexPage("events", published.filter((s) => s.kind === "events")));
+  writeFileSync(
+    join(outDir, "api", apiVersion, "index.md"),
+    indexPage("http", apiVersion, published.filter((s) => s.kind === "http")),
+  );
+  writeFileSync(
+    join(outDir, "events", apiVersion, "index.md"),
+    indexPage("events", apiVersion, published.filter((s) => s.kind === "events")),
+  );
+  // Rebuild the switchers by scanning every version dir present (this build's +
+  // any prior versions kept in outDir).
+  writeFileSync(join(outDir, "api", "index.md"), switcherPage("http", listVersions(versionDirs(join(outDir, "api")))));
+  writeFileSync(join(outDir, "events", "index.md"), switcherPage("events", listVersions(versionDirs(join(outDir, "events")))));
+  writeFileSync(join(outDir, "index.md"), topIndexPage());
   return { published, denied };
 }
 
@@ -205,16 +284,21 @@ function main() {
     console.error("no --specs-root supplied; using examples/public-api-fixture/specs");
     specsRoot = join(REPO_ROOT, "examples", "public-api-fixture", "specs");
   }
-  const outDir = flag("out", argv) ?? join(REPO_ROOT, ".build-workspace", "public-api");
+  // Default OUTSIDE .build-workspace: build-external.sh wipes .build-workspace at
+  // the start of its run, so the reference is staged from .build-ref to survive
+  // and get copied into the site under reference/.
+  const outDir = flag("out", argv) ?? join(REPO_ROOT, ".build-ref", "public-api");
   const configPath =
     flag("config", argv) ??
     (existsSync(join(REPO_ROOT, "examples", "public-api-fixture", "api-tiers.json")) && !flag("specs-root", argv)
       ? join(REPO_ROOT, "examples", "public-api-fixture", "api-tiers.json")
       : join(REPO_ROOT, "config", "api-tiers.json"));
 
+  const apiVersion = flag("api-version", argv) ?? "v1.2";
   const cfg = loadTierConfig(configPath);
-  const { published, denied } = generate(specsRoot, outDir, cfg);
+  const { published, denied } = generate(specsRoot, outDir, cfg, apiVersion);
   console.error(`config: ${configPath}`);
+  console.error(`api version: ${apiVersion}`);
   console.error(`published (public tier): ${published.length} -> ${outDir}`);
   for (const s of published) console.error(`  PUBLISH ${s.kind} ${s.key}`);
   console.error(`denied (deny-by-default): ${denied.length}`);

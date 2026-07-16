@@ -116,6 +116,10 @@ nav:
       - Integration: integration/index.md
       - API reference: api/index.md
       - Event contracts: events/index.md
+      # Generated, versioned, deny-by-default reference (public-api-docs.ts).
+      # Entry page links into api/ + events/ version switchers; per-version and
+      # per-service pages are discovered via those links (empty until UD-8).
+      - API & event reference (generated): reference/index.md
       - Auth setup: auth/index.md
   - Operate:
       - Operations: operations/index.md

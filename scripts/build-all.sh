@@ -22,8 +22,20 @@ else
   bash "${REPO_ROOT}/scripts/build-api-docs.sh" --out "${API_OUT:-$API_STAGE}"
 fi
 
+log "A2: public API/event reference (OpenAPI + AsyncAPI, DENY-BY-DEFAULT, versioned)"
+# --specs-root is optional: absent, the generator falls back to the in-repo
+# fixture so build-all runs standalone. A real build passes --api-specs pointing
+# at the workspace contract output.
+# Outside .build-workspace: build-external.sh wipes that dir at the start of its
+# run, so the generated reference must be staged from a sibling that survives.
+REF_STAGE="${REPO_ROOT}/.build-ref/public-api"
+SPECS_ROOT="$(parse_flag api-specs "$@")"
+REF_ARGS=(--out "$REF_STAGE")
+[[ -n "$SPECS_ROOT" ]] && REF_ARGS+=(--specs-root "$SPECS_ROOT")
+bun "${REPO_ROOT}/scripts/public-api-docs.ts" "${REF_ARGS[@]}"
+
 log "B: external static site (MkDocs Material, offline)"
-EXT_ARGS=(--api-dir "${API_OUT:-$API_STAGE}")
+EXT_ARGS=(--api-dir "${API_OUT:-$API_STAGE}" --reference-dir "$REF_STAGE")
 [[ -n "$CONTENT_DIR" ]] && EXT_ARGS=(--content-dir "$CONTENT_DIR" "${EXT_ARGS[@]}")
 bash "${REPO_ROOT}/scripts/build-external.sh" "${EXT_ARGS[@]}"
 

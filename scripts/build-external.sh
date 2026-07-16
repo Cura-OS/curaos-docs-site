@@ -14,6 +14,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 CONTENT_DIR="$(resolve_content_dir "$(parse_flag content-dir "$@")")"
 API_DIR="$(parse_flag api-dir "$@")"
+REFERENCE_DIR="$(parse_flag reference-dir "$@")"
 OUT_DIR="$(parse_flag out "$@")"; OUT_DIR="${OUT_DIR:-${REPO_ROOT}/site}"
 WORKSPACE="${REPO_ROOT}/.build-workspace/docs"
 
@@ -28,9 +29,17 @@ if [[ -n "$API_DIR" && -d "$API_DIR" ]]; then
   mkdir -p "${WORKSPACE}/api"
   cp -R "${API_DIR}/." "${WORKSPACE}/api/"
 fi
+
+# Generated versioned public API/event reference (public-api-docs.ts). Staged
+# under reference/ so it never collides with the authored api/ + events/ pages.
+if [[ -n "$REFERENCE_DIR" && -d "$REFERENCE_DIR" ]]; then
+  info "staging generated public reference from: $REFERENCE_DIR"
+  mkdir -p "${WORKSPACE}/reference"
+  cp -R "${REFERENCE_DIR}/." "${WORKSPACE}/reference/"
+fi
 # Guarantee the nav anchors exist so --strict does not fail on a sparse content
 # dir (the in-repo fixture provides all of them; a real content dir may not).
-for sub in install integration operations api; do
+for sub in install integration operations api reference; do
   if [[ ! -f "${WORKSPACE}/${sub}/index.md" ]]; then
     mkdir -p "${WORKSPACE}/${sub}"
     printf '# %s\n\n_Section placeholder: populate from the docs-content mirror._\n' \

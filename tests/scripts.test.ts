@@ -95,6 +95,10 @@ describe("scripts/build-all.sh - --api-out is honored without --api-entry", () =
     for (const s of ["build-api-docs.sh", "build-external.sh", "build-techdocs.sh"]) {
       writeFileSync(join(scripts, s), stub(s), { mode: 0o755 });
     }
+    // build-all also runs the reference generator (bun public-api-docs.ts) between
+    // the api-docs and external steps; stub it so this orchestration test stays
+    // about --api-out routing. Real generation is covered by public-api-docs.test.ts.
+    writeFileSync(join(scripts, "public-api-docs.ts"), "process.exit(0);\n");
     const r = spawnSync("bash", [join(scripts, "build-all.sh"), ...extraArgs], {
       cwd: work,
       encoding: "utf8",

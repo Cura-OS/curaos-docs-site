@@ -74,36 +74,56 @@ describe("render", () => {
   });
 });
 
-describe("generate (end-to-end deny-by-default)", () => {
+describe("generate (end-to-end deny-by-default, versioned)", () => {
   const out = join(import.meta.dir, "_gen-out");
-  test("publishes public surface, denies internal surface", () => {
+  const V = "v9.9";
+  test("publishes public surface under version dir, denies internal surface", () => {
     rmSync(out, { recursive: true, force: true });
     const cfg = loadTierConfig(join(FIXTURE, "api-tiers.json"));
-    const res = generate(SPECS, out, cfg);
+    const res = generate(SPECS, out, cfg, V);
 
     expect(res.published.map((s) => s.key).sort()).toEqual(["public-thing-service", "public-thing-service"]);
     expect(res.denied.every((s) => s.key === "secret-admin-service")).toBe(true);
     expect(res.denied.length).toBe(2);
 
-    expect(existsSync(join(out, "api", "services", "public-thing-service.md"))).toBe(true);
-    expect(existsSync(join(out, "events", "services", "public-thing-service.md"))).toBe(true);
+    expect(existsSync(join(out, "api", V, "services", "public-thing-service.md"))).toBe(true);
+    expect(existsSync(join(out, "events", V, "services", "public-thing-service.md"))).toBe(true);
     // The security assertion: nothing internal on disk, at all.
-    expect(existsSync(join(out, "api", "services", "secret-admin-service.md"))).toBe(false);
-    expect(existsSync(join(out, "events", "services", "secret-admin-service.md"))).toBe(false);
+    expect(existsSync(join(out, "api", V, "services", "secret-admin-service.md"))).toBe(false);
+    expect(existsSync(join(out, "events", V, "services", "secret-admin-service.md"))).toBe(false);
 
-    const allText = readdirSync(join(out, "api", "services"))
-      .concat(readdirSync(join(out, "events", "services")))
-      .map((f) => f)
+    const allText = readdirSync(join(out, "api", V, "services"))
+      .concat(readdirSync(join(out, "events", V, "services")))
       .join("\n");
     expect(allText).not.toContain("secret");
 
+    // Version switcher links the emitted version, marked current.
+    const httpSwitcher = readFileSync(join(out, "api", "index.md"), "utf8");
+    expect(httpSwitcher).toContain(`[${V} (current)](${V}/index.md)`);
+    // Per-version index links down into services/.
+    const httpIndex = readFileSync(join(out, "api", V, "index.md"), "utf8");
+    expect(httpIndex).toContain("[public-thing-service](services/public-thing-service.md)");
+
+    rmSync(out, { recursive: true, force: true });
+  });
+
+  test("switcher accumulates multiple versions, newest first", () => {
+    rmSync(out, { recursive: true, force: true });
+    const cfg: TierConfig = { defaultTier: "internal", http: { public: [] }, events: { public: [] } };
+    generate(SPECS, out, cfg, "v1.1");
+    generate(SPECS, out, cfg, "v1.2");
+    const switcher = readFileSync(join(out, "api", "index.md"), "utf8");
+    const iCur = switcher.indexOf("v1.2");
+    const iPrev = switcher.indexOf("v1.1");
+    expect(iCur).toBeGreaterThanOrEqual(0);
+    expect(iPrev).toBeGreaterThan(iCur); // newest listed first
     rmSync(out, { recursive: true, force: true });
   });
 
   test("empty allowlist publishes nothing (deny all)", () => {
     rmSync(out, { recursive: true, force: true });
     const cfg: TierConfig = { defaultTier: "internal", http: { public: [] }, events: { public: [] } };
-    const res = generate(SPECS, out, cfg);
+    const res = generate(SPECS, out, cfg, V);
     expect(res.published.length).toBe(0);
     expect(res.denied.length).toBe(4);
     rmSync(out, { recursive: true, force: true });

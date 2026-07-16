@@ -2,6 +2,7 @@ node_modules/
 site/
 techdocs-site/
 .build-workspace/
+.build-ref/
 .cache/
 *.log
 .DS_Store

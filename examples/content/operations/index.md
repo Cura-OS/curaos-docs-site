@@ -10,7 +10,7 @@ probed without a token. Through the gateway:
 
 ```bash
 curl -s -o /dev/null -w "%{http_code}\n" https://<your-host>/api/v1/party/healthz
-curl -s -o /dev/null -w "%{http_code}\n" https://<your-host>/api/v1/tenancy/healthz
+curl -s -o /dev/null -w "%{http_code}\n" https://<your-host>/api/v1/<domain>/healthz
 ```
 
 A `200` means the service is up. Wire these into your uptime checks and the

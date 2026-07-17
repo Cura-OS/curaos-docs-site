@@ -51,7 +51,7 @@ neutral core party and tenancy contracts:
 | Service | Public HTTP surface | Public events |
 | --- | --- | --- |
 | `party-core-service` | `/api/v1/party` (parties) | `curaos.core.party.*` |
-| `tenancy-core-service` | `/api/v1/tenancy` | `curaos.core.tenancy.tenant.*` |
+| `tenancy-core-service` | events only (no public HTTP) | `curaos.core.tenancy.tenant.*` |
 
 Everything else is internal by construction and is not published. See the
 [API reference](../api/index.md) and [Event contracts](../events/index.md) for
@@ -66,7 +66,7 @@ excepted).
 
 ```bash
 # Unauthenticated liveness probe.
-curl -i https://<your-host>/api/v1/tenancy/healthz
+curl -i https://<your-host>/api/v1/party/healthz
 
 # Authenticated read.
 curl https://<your-host>/api/v1/party \

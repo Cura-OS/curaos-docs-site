@@ -19,10 +19,10 @@ Each public domain lives under a versioned gateway path. The shape is:
 https://<your-host>/api/v1/<domain>/<resource>
 ```
 
-For example, the tenancy service health check:
+For example, the party service health check:
 
 ```bash
-curl -i https://<your-host>/api/v1/tenancy/healthz
+curl -i https://<your-host>/api/v1/party/healthz
 # HTTP/2 200
 ```
 
@@ -36,7 +36,7 @@ Code with PKCE flow. Acquire a token through the OIDC flow (see
 [Auth setup](../auth/index.md)), then send it on each request:
 
 ```bash
-curl https://<your-host>/api/v1/tenancy \
+curl https://<your-host>/api/v1/party \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
 
@@ -53,7 +53,9 @@ neutral-core surface is:
 | Prefix | Capability |
 | --- | --- |
 | `/api/v1/party` | People and organizations modelled as parties |
-| `/api/v1/tenancy` | Tenants, organizations, isolation boundaries |
+
+Tenancy is published as a public event namespace (`curaos.core.tenancy.tenant.*`),
+not as a public HTTP surface.
 
 The naming and layering of the wider service set are described neutrally in the
 [Services catalogue](../services/index.md); overlay and internal surfaces are not

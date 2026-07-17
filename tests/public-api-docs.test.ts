@@ -45,8 +45,8 @@ describe("loadTierConfig fails closed", () => {
     const cfg = loadTierConfig(join(ROOT, "config", "api-tiers.json"));
     // Deny-by-default default tier is preserved: anything not allowlisted is internal.
     expect(cfg.defaultTier).toBe("internal");
-    // UD-8 (2026-07-17) approved ONLY the neutral core service contracts.
-    expect(cfg.http.public).toEqual(["tenancy-core-service", "party-core-service"]);
+    // UD-8 (2026-07-17) approved least-privilege: HTTP is party-core only; events add tenancy-core.
+    expect(cfg.http.public).toEqual(["party-core-service"]);
     expect(cfg.events.public).toEqual(["tenancy-core-service", "party-core-service"]);
     // Invariant: NO PHI/healthstack/identity/admin key may ever enter the allowlist.
     const all = [...cfg.http.public, ...cfg.events.public];

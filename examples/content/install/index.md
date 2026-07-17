@@ -72,7 +72,7 @@ cd curaos
 helm install curaos <umbrella-chart>   # illustrative
 
 # Confirm a core service is healthy through the gateway.
-curl -i https://<your-host>/api/v1/tenancy/healthz
+curl -i https://<your-host>/api/v1/party/healthz
 ```
 
 ## Verifying the install
@@ -81,7 +81,7 @@ Once the core is up, the unauthenticated health endpoints are the fastest check:
 
 ```bash
 curl -s https://<your-host>/api/v1/party/healthz      # 200 when party is up
-curl -s https://<your-host>/api/v1/tenancy/healthz    # 200 when tenancy is up
+curl -s https://<your-host>/api/v1/<domain>/healthz   # 200 when that service is up
 ```
 
 Then open the admin app, sign in through Pocket-ID, and confirm a tenant loads.

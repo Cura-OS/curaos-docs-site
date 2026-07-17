@@ -40,7 +40,7 @@ client-secret flow in the browser.
 The API gateway accepts the access token Pocket-ID issues:
 
 ```bash
-curl https://<your-host>/api/v1/tenancy \
+curl https://<your-host>/api/v1/party \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
 

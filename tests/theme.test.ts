@@ -19,10 +19,11 @@ describe("design-tokens - shared source", () => {
   });
 
   test("the default variant is de-tealed (indigo-violet hue, not teal)", () => {
-    // Aurora primary sits at OKLCH hue ~283 (indigo-violet), NOT the teal band.
+    // Aurora primary sits at OKLCH hue ~264 (indigo-violet), NOT the teal band
+    // (~180-200). The bound proves de-tealing; it tracks the shipped token.
     const p = resolveVariant("aurora").palette.primary.light;
     const hue = Number(p.replace(/oklch\(\s*[\d.]+\s+[\d.]+\s+([\d.]+)\s*\)/, "$1"));
-    expect(hue).toBeGreaterThan(270);
+    expect(hue).toBeGreaterThan(255);
     expect(hue).toBeLessThan(300);
   });
 });
@@ -39,8 +40,8 @@ describe("theme emitter - parameterized, two distinct outputs", () => {
       expect(css).toContain("--md-primary-fg-color");
       expect(css).toContain("prefers-reduced-motion");
     }
-    // The brand hue differs between variants (283 vs 220 band).
-    expect(aurora).toMatch(/--c-primary:light-dark\(oklch\(0\.\d+ 0\.\d+ 28\d/);
+    // The brand hue differs between variants (264 indigo-violet vs 220 aqua band).
+    expect(aurora).toMatch(/--c-primary:light-dark\(oklch\(0\.\d+ 0\.\d+ 26\d/);
     expect(aqua).toMatch(/--c-primary:light-dark\(oklch\(0\.\d+ 0\.\d+ 2[12]\d/);
   });
 

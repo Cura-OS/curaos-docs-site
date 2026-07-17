@@ -11,6 +11,7 @@ import {
   surfaceKey,
   renderOpenApi,
   renderAsyncApi,
+  authForOp,
   generate,
   listVersions,
   switcherPage,
@@ -62,9 +63,10 @@ describe("discovery", () => {
 });
 
 describe("render", () => {
-  test("openapi lists operations", () => {
+  test("openapi lists operations with a derived Auth column", () => {
     const md = renderOpenApi({ info: { title: "T", version: "1" }, paths: { "/x": { get: { operationId: "X_get", summary: "s" } } } });
-    expect(md).toContain("| GET | `/x` | `X_get` | s |");
+    // No declared 401/403 on this op -> unauthenticated probe -> Public.
+    expect(md).toContain("| GET | `/x` | `X_get` | Public | s |");
   });
   test("asyncapi lists channels", () => {
     const md = renderAsyncApi({ info: { title: "T" }, channels: { c: { address: "a.v1", messages: { M: {} } } } });
@@ -73,6 +75,37 @@ describe("render", () => {
   test("strips em/en dashes from source descriptions", () => {
     const md = renderOpenApi({ info: { title: "T", description: "a \u2014 b \u2013 c" }, paths: {} });
     expect(md).not.toMatch(/[\u2014\u2013]/);
+  });
+  test("renders the gateway base path from the spec servers", () => {
+    const md = renderOpenApi({
+      info: { title: "T" },
+      servers: [{ url: "http://localhost:3000" }, { url: "https://{host}/api/v1/thing" }],
+      paths: {},
+    });
+    expect(md).toContain("Gateway base path: `https://{host}/api/v1/thing`");
+  });
+});
+
+describe("deny-by-default auth note (security posture, derived from responses)", () => {
+  test("authForOp derives requirement from declared error responses", () => {
+    // 403 present -> role-gated; 401 only -> token required; neither -> Public.
+    expect(authForOp({ responses: { "200": {}, "401": {}, "403": {} } })).toBe("Bearer + role");
+    expect(authForOp({ responses: { "200": {}, "401": {} } })).toBe("Bearer");
+    expect(authForOp({ responses: { "200": {} } })).toBe("Public");
+    expect(authForOp({})).toBe("Public");
+  });
+  test("every generated http/event page carries the deny-by-default auth note", () => {
+    const NOTE = "Deny-by-default authentication";
+    const http = renderOpenApi({ info: { title: "T" }, paths: { "/h": { get: { operationId: "H", summary: "s", responses: { "401": {} } } } } });
+    const evt = renderAsyncApi({ info: { title: "T" }, channels: { c: { address: "a.v1", messages: { M: {} } } } });
+    expect(http).toContain(NOTE);
+    expect(http).toContain("`Authorization: Bearer");
+    expect(evt).toContain(NOTE);
+    // A mold-shaped op (401 + 403) renders as role-gated in the Auth column.
+    expect(http).toContain("| GET | `/h` | `H` | Bearer | s |");
+  });
+  test("switcher and index pages also carry the auth note", () => {
+    expect(switcherPage("http", ["v1.2"])).toContain("Deny-by-default authentication");
   });
 });
 

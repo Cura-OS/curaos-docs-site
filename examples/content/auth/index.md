@@ -9,8 +9,8 @@ wire up your own provider.
 
 All public web apps and the API gateway speak the same OIDC flow:
 
-1. The user opens an app and is redirected to Pocket-ID (the live IdP is at
-   `auth.abualruz.com`).
+1. The user opens an app and is redirected to Pocket-ID (the IdP is hosted at
+   your provider host, `https://<auth-host>`).
 2. The app starts an **Authorization Code + PKCE** request (a public client, no
    client secret in the browser; PKCE protects the code exchange).
 3. The user authenticates at Pocket-ID and is redirected back to the app with an
@@ -20,11 +20,11 @@ All public web apps and the API gateway speak the same OIDC flow:
 5. The app calls the API gateway with the access token as a bearer token.
 
 ```
-User -> App -> Pocket-ID (auth.abualruz.com)   [authorize + PKCE]
+User -> App -> Pocket-ID (<auth-host>)   [authorize + PKCE]
      <- code <-
 App  -> Pocket-ID  [token exchange + PKCE verifier]
      <- id_token + access_token <-
-App  -> API gateway (api.abualruz.com)  [Authorization: Bearer <access_token>]
+App  -> API gateway (<your-host>)  [Authorization: Bearer <access_token>]
 ```
 
 ## Why PKCE
@@ -40,13 +40,13 @@ client-secret flow in the browser.
 The API gateway accepts the access token Pocket-ID issues:
 
 ```bash
-curl https://api.abualruz.com/api/v1/tenancy \
+curl https://<your-host>/api/v1/tenancy \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
 
 Tokens are scoped per tenant and per role. RBAC (with optional ABAC) decides what
 a token may do. Audit records are tamper-evident, and privileged actions follow
-an approval path with a logged break-glass option.
+an approval path with a logged emergency-access option.
 
 ## Wiring up your own provider
 
@@ -57,9 +57,9 @@ the gateway against it.
    compliant OIDC provider that supports Authorization Code + PKCE will work.
 
 2. **Register the clients.** Register each app as a public client with PKCE
-   enabled, and set its redirect URI to the app's callback. The apps share the
-   `login.abualruz.com` sign-in surface in the reference; you can mirror that or
-   register per-app redirect URIs.
+   enabled, and set its redirect URI to the app's callback. The apps can share a
+   single hosted sign-in surface (`https://<login-host>`), or you can mirror that
+   pattern and register per-app redirect URIs.
 
 3. **Configure issuer and audience.** Point the apps and the gateway at the
    provider's issuer URL, and set the expected audience for the access token so

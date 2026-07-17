@@ -174,7 +174,7 @@ ${cardHtml}
         <h3><span class="dot" aria-hidden="true"></span>Running today</h3>
         <ul>
           <li>${CHECK}<span>Frontend apps on their own subdomains, one design system, dark mode and Arabic RTL that persist.</span></li>
-          <li>${CHECK}<span>Neutral core plus HealthStack and personal/business variants behind an API gateway.</span></li>
+          <li>${CHECK}<span>Neutral core plus Health and personal/business variants behind an API gateway.</span></li>
           <li>${CHECK}<span>OIDC single sign-on through Pocket-ID (Authorization Code with PKCE), brokered into a session.</span></li>
           <li>${CHECK}<span>Self-hosted runtime: Kubernetes, CNPG-managed PostgreSQL, Valkey, and an ingress controller.</span></li>
         </ul>
@@ -184,7 +184,7 @@ ${cardHtml}
         <ul>
           <li>${CLOCK}<span>Read and write endpoints filling in across every service along the milestone plan.</span></li>
           <li>${CLOCK}<span>The public demo tenant and the air-gap install bundle.</span></li>
-          <li>${CLOCK}<span>Education and ERP overlays beyond the HealthStack first mover.</span></li>
+          <li>${CLOCK}<span>Education and ERP overlays beyond the Health first mover.</span></li>
           <li>${CLOCK}<span>The 1.0 release: a stable, versioned contract surface.</span></li>
         </ul>
       </div>

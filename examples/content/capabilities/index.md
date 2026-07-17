@@ -19,7 +19,7 @@ App / site builder
     consistent.
 
 Automation core
-:   Low-code actions, connectors, and scheduling, so integrations and routine
+:   Low-code actions, connectors, and schedules, so integrations and routine
     work are configured rather than coded.
 
 How these three turn a domain definition into a running app is described in
@@ -46,14 +46,16 @@ single neutral `*-core-service` owns the capability.
 
 ## Vertical overlays
 
-Opt-in, and they extend the core only.
+Opt-in, and they extend the core only. Each overlay owns its own protected data
+inside its own schemas; overlay surfaces are internal and are not part of the
+public API reference.
 
-HealthStack
-:   Patient, encounter, scheduling, clinical documents, orders, lab, meds,
-    imaging, claims, consent, interop, EMS, terminology, devices, care plans, and
-    quality. Clinical PHI stays inside the overlay schemas.
+Health
+:   A regulated care vertical for organizations that need it. Its protected data
+    stays inside the overlay schemas, isolated per tenant, and never in the
+    neutral core.
 
-EducationStack
+Education
 :   Student lifecycle, course authoring, and accreditation.
 
 ERP
@@ -72,7 +74,7 @@ These hold across every capability:
 - **Observability by default.** Tracing, structured logs, and metrics are on by
   default, with tenant-aware dashboards.
 - **Security in depth.** OIDC with PKCE, RBAC with optional ABAC, tamper-evident
-  audit, and a logged break-glass path.
+  audit, and a logged emergency-access path.
 
 For the complete, grouped list of every service that owns these capabilities, see
 the [Services catalogue](../services/index.md). To see how they are exposed over

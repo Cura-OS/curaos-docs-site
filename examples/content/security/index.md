@@ -31,7 +31,7 @@ Audit
 :   A tamper-evident audit trail (`audit-core-service`) records security-relevant
     actions. Privileged actions follow an approval path.
 
-Break-glass
+Emergency access
 :   Emergency access is available but always logged with a reason, so the
     exceptional path stays accountable.
 
@@ -54,24 +54,24 @@ This boundary is enforced at two layers:
   schemas.
 - **Service layer.** Neutral core services are written to carry references and
   metadata only. Anything that touches PHI or PII goes through the relevant
-  overlay (for example HealthStack), under that tenant's isolation.
+  opt-in overlay, under that tenant's isolation.
 
 An integration that needs protected data therefore goes through the overlay that
 owns it, never through the neutral core. See [Integration](../integration/index.md)
 for the integration-side view of this rule.
 
-## HIPAA: protected health information
+## Regulated-data deployments
 
-For HealthStack deployments, the PHI boundary is the foundation of HIPAA
-alignment:
+For deployments that handle protected data under a regulated vertical, the
+data-isolation boundary is the foundation of the compliance posture:
 
-- **Clinical PHI stays inside the HealthStack overlay schemas.** The neutral core
-  never stores it. Encounters, problems, labs, meds, imaging, consent, and the
-  rest live in the overlay (`healthstack-*` services), isolated per tenant.
-- **Consent is enforced.** `healthstack-consent-service` manages consent, so
-  access to clinical data respects the patient's recorded consent.
+- **Protected data stays inside the overlay schemas.** The neutral core never
+  stores it. It lives in the relevant opt-in overlay, isolated per tenant.
+- **Lawful basis is enforced.** Access to protected data respects the recorded
+  lawful basis and the data subject's rights.
 - **Access is audited.** Reads and writes against protected data are recorded in
-  the tamper-evident audit trail, supporting the accountability HIPAA expects.
+  the tamper-evident audit trail, supporting the accountability regulators
+  expect.
 - **Minimum exposure.** Surfaces and APIs are scoped per role, so a token sees
   only what its role permits.
 
@@ -82,8 +82,7 @@ subject-rights tooling:
 
 - **PII lives in overlay schemas**, isolated per tenant, with neutral services
   holding references only.
-- **Consent enforcement** applies to personal data the same way it applies to
-  clinical data.
+- **Lawful-basis enforcement** applies to personal data across every overlay.
 - **Subject-rights tooling** supports the data-subject requests GDPR requires
   (access, rectification, erasure, portability), operating against the tenant's
   isolated data.
@@ -120,8 +119,8 @@ a regulated workload is responsible for:
 - Configuring the OIDC provider with the required strong-auth controls.
 - Mapping provider groups and claims onto CuraOS roles correctly.
 - Running backups and testing recovery (see [Operations](../operations/index.md)).
-- Applying the jurisdiction-appropriate legal and consent configuration.
-- Restricting and monitoring the break-glass path.
+- Applying the jurisdiction-appropriate legal and lawful-basis configuration.
+- Restricting and monitoring the emergency-access path.
 
 Next: [Operations](../operations/index.md) for the day-2 runbooks, and
 [Auth setup](../auth/index.md) for wiring the identity provider.

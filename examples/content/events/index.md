@@ -65,7 +65,7 @@ the published schema, not against a service's current behavior.
 A typical event-driven integration:
 
 1. **Identify the domains you care about.** Each domain (commerce, calendar,
-   donation, fleet, the HealthStack clinical domains, and so on) publishes events
+   donation, fleet, the opt-in overlay domains, and so on) publishes events
    for the things that happen in it. The owning service is listed in the
    [Services catalogue](../services/index.md).
 
@@ -91,7 +91,7 @@ tenant's isolation. See [Security and compliance](../security/index.md).
 
 If you do not want to write an event consumer, the automation core
 (`automation-core-service`) can react to events declaratively: a trigger on an
-event, a set of actions, and optional scheduling. This is the low-code path for
+event, a set of actions, and optional schedules. This is the low-code path for
 the same change-notification use case. See [Workflow & builder](../builder/index.md).
 
 Next: [Integration](../integration/index.md) for the end-to-end integration flow,

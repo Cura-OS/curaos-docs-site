@@ -1,10 +1,8 @@
 # Apps guide
 
-CuraOS tracks 22 frontend app projects: 20 web apps plus 2 Expo mobile apps.
-The local real-data render gate exercises the 20 web apps, and the public
-reference deployment exposes 19 vanity web hosts today. The remaining web app,
-Builder Studio, is deployed as a cluster app without a public vanity host. The
-mobile apps do not have web subdomains.
+CuraOS ships a suite of generated frontend apps. Most are web apps exposed as
+vanity web hosts under your deployment domain; a few (for example Builder Studio)
+run as cluster apps without a public vanity host.
 
 Every web app is generated from the same workflow definitions and domain
 contracts, themed by one shared design system (`@curaos/ui`). Dark mode and
@@ -22,21 +20,19 @@ Operate and build the system itself.
 
 | App | URL | What it does |
 | --- | --- | --- |
-| Admin | `https://admin.abualruz.com` | Tenant, identity, and platform administration console. |
-| Builder | `https://builder.abualruz.com` | Low-code app and site builder that generates surfaces from BPM definitions and domain contracts. |
-| Front office | `https://front-office.abualruz.com` | Staff-facing operations desk: tasks, scheduling, and day-to-day workflows. |
-| Fleet | `https://fleet.abualruz.com` | Vehicle and asset fleet tracking and dispatch. |
-| Login | `https://login.abualruz.com` | Shared OIDC sign-in surface (Authorization Code with PKCE via Pocket-ID). |
+| Admin | `https://admin.<your-host>` | Tenant, identity, and platform administration console. |
+| Builder | `https://builder.<your-host>` | Low-code app and site builder that generates surfaces from BPM definitions and domain contracts. |
+| Front office | `https://front-office.<your-host>` | Staff-facing operations desk: tasks, calendaring, and day-to-day workflows. |
+| Fleet | `https://fleet.<your-host>` | Vehicle and asset fleet tracking and dispatch. |
+| Login | `https://login.<your-host>` | Shared OIDC sign-in surface (Authorization Code with PKCE via Pocket-ID). |
 
-## Cluster and mobile apps
+## Cluster apps
 
 These app projects are tracked in the repo but are not public vanity web hosts.
 
 | App | Surface | What it does |
 | --- | --- | --- |
 | Builder Studio | Cluster web app | Studio surface for generated builder workflows and site publishing. |
-| Clinician app | Expo mobile app | Mobile clinical workflow shell. |
-| Patient app | Expo mobile app | Mobile patient workflow shell. |
 
 ## Project inventory
 
@@ -45,28 +41,26 @@ cluster-only or mobile-only.
 
 | Project slug | Surface | Public host |
 | --- | --- | --- |
-| `admin-app` | Web | `https://admin.abualruz.com` |
+| `admin-app` | Web | `https://admin.<your-host>` |
 | `builder-studio` | Web, cluster-only | none |
-| `business-automation` | Web | `https://biz-automation.abualruz.com` |
-| `business-donation` | Web | `https://biz-donation.abualruz.com` |
-| `business-shop` | Web | `https://biz-shop.abualruz.com` |
-| `business-site` | Web | `https://biz-site.abualruz.com` |
-| `business-workflow` | Web | `https://biz-workflow.abualruz.com` |
-| `clinician-app` | Expo mobile | none |
-| `fleet-manager` | Web | `https://fleet.abualruz.com` |
-| `front-office` | Web | `https://front-office.abualruz.com` |
-| `hosted-login` | Web | `https://login.abualruz.com` |
-| `patient-app` | Expo mobile | none |
-| `personal-automation` | Web | `https://my-automation.abualruz.com` |
-| `personal-calendar` | Web | `https://my-calendar.abualruz.com` |
-| `personal-donation` | Web | `https://my-donation.abualruz.com` |
-| `personal-notes` | Web | `https://my-notes.abualruz.com` |
-| `personal-shop` | Web | `https://my-shop.abualruz.com` |
-| `personal-site` | Web | `https://my-site.abualruz.com` |
-| `personal-tasks` | Web | `https://my-tasks.abualruz.com` |
-| `personal-tracking` | Web | `https://my-tracking.abualruz.com` |
-| `personal-workflow` | Web | `https://my-workflow.abualruz.com` |
-| `workflow-designer` | Web | `https://builder.abualruz.com` |
+| `business-automation` | Web | `https://biz-automation.<your-host>` |
+| `business-donation` | Web | `https://biz-donation.<your-host>` |
+| `business-shop` | Web | `https://biz-shop.<your-host>` |
+| `business-site` | Web | `https://biz-site.<your-host>` |
+| `business-workflow` | Web | `https://biz-workflow.<your-host>` |
+| `fleet-manager` | Web | `https://fleet.<your-host>` |
+| `front-office` | Web | `https://front-office.<your-host>` |
+| `hosted-login` | Web | `https://login.<your-host>` |
+| `personal-automation` | Web | `https://my-automation.<your-host>` |
+| `personal-calendar` | Web | `https://my-calendar.<your-host>` |
+| `personal-donation` | Web | `https://my-donation.<your-host>` |
+| `personal-notes` | Web | `https://my-notes.<your-host>` |
+| `personal-shop` | Web | `https://my-shop.<your-host>` |
+| `personal-site` | Web | `https://my-site.<your-host>` |
+| `personal-tasks` | Web | `https://my-tasks.<your-host>` |
+| `personal-tracking` | Web | `https://my-tracking.<your-host>` |
+| `personal-workflow` | Web | `https://my-workflow.<your-host>` |
+| `workflow-designer` | Web | `https://builder.<your-host>` |
 
 ## Business suite
 
@@ -74,11 +68,11 @@ Run an organization. These are the `biz-*` apps.
 
 | App | URL | What it does |
 | --- | --- | --- |
-| Business workflow | `https://biz-workflow.abualruz.com` | Design and run org-level BPM workflows and approvals. |
-| Business automation | `https://biz-automation.abualruz.com` | Low-code automation: connectors, actions, and scheduling. |
-| Business site | `https://biz-site.abualruz.com` | Build and publish public-facing organization sites. |
-| Business shop | `https://biz-shop.abualruz.com` | Commerce and storefront for an organization. |
-| Business donation | `https://biz-donation.abualruz.com` | Donation campaigns and fundraising for an organization. |
+| Business workflow | `https://biz-workflow.<your-host>` | Design and run org-level BPM workflows and approvals. |
+| Business automation | `https://biz-automation.<your-host>` | Low-code automation: connectors, actions, and schedules. |
+| Business site | `https://biz-site.<your-host>` | Build and publish public-facing organization sites. |
+| Business shop | `https://biz-shop.<your-host>` | Commerce and storefront for an organization. |
+| Business donation | `https://biz-donation.<your-host>` | Donation campaigns and fundraising for an organization. |
 
 ## Personal suite
 
@@ -86,15 +80,15 @@ For an individual. These are the `my-*` apps.
 
 | App | URL | What it does |
 | --- | --- | --- |
-| My workflow | `https://my-workflow.abualruz.com` | Personal workflows and task pipelines. |
-| My automation | `https://my-automation.abualruz.com` | Personal low-code automations and connectors. |
-| My tasks | `https://my-tasks.abualruz.com` | Personal task and to-do management. |
-| My calendar | `https://my-calendar.abualruz.com` | Personal calendar and scheduling. |
-| My notes | `https://my-notes.abualruz.com` | Personal notes and documents. |
-| My tracking | `https://my-tracking.abualruz.com` | Personal location and asset tracking. |
-| My site | `https://my-site.abualruz.com` | Build and publish a personal site. |
-| My shop | `https://my-shop.abualruz.com` | Personal storefront and commerce. |
-| My donation | `https://my-donation.abualruz.com` | Personal donation and fundraising pages. |
+| My workflow | `https://my-workflow.<your-host>` | Personal workflows and task pipelines. |
+| My automation | `https://my-automation.<your-host>` | Personal low-code automations and connectors. |
+| My tasks | `https://my-tasks.<your-host>` | Personal task and to-do management. |
+| My calendar | `https://my-calendar.<your-host>` | Personal calendar and reminders. |
+| My notes | `https://my-notes.<your-host>` | Personal notes and documents. |
+| My tracking | `https://my-tracking.<your-host>` | Personal location and asset tracking. |
+| My site | `https://my-site.<your-host>` | Build and publish a personal site. |
+| My shop | `https://my-shop.<your-host>` | Personal storefront and commerce. |
+| My donation | `https://my-donation.<your-host>` | Personal donation and fundraising pages. |
 
 ## How the apps are built
 

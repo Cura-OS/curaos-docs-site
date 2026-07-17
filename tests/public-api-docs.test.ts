@@ -41,11 +41,18 @@ describe("loadTierConfig fails closed", () => {
     expect(cfg.events.public).toEqual([]);
     rmSync(p, { force: true });
   });
-  test("shipped config publishes nothing until UD-8", () => {
+  test("shipped config: UD-8-approved neutral GA surface only, deny-by-default preserved", () => {
     const cfg = loadTierConfig(join(ROOT, "config", "api-tiers.json"));
+    // Deny-by-default default tier is preserved: anything not allowlisted is internal.
     expect(cfg.defaultTier).toBe("internal");
-    expect(cfg.http.public).toEqual([]);
-    expect(cfg.events.public).toEqual([]);
+    // UD-8 (2026-07-17) approved least-privilege: HTTP is party-core only; events add tenancy-core.
+    expect(cfg.http.public).toEqual(["party-core-service"]);
+    expect(cfg.events.public).toEqual(["tenancy-core-service", "party-core-service"]);
+    // Invariant: NO PHI/healthstack/identity/admin key may ever enter the allowlist.
+    const all = [...cfg.http.public, ...cfg.events.public];
+    for (const key of all) {
+      expect(key).not.toMatch(/healthstack|patient|identity|auth|admin|clinical|encounter|ops/i);
+    }
   });
 });
 

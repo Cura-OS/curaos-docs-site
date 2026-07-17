@@ -1,14 +1,14 @@
 {
-  "note": "DENY-BY-DEFAULT public API docs tiering (ADR-0262, V12-GA-SURFACE-API-DOCS). Any service surface NOT explicitly listed under an http.public or events.public allowlist is INTERNAL and is NEVER published to the public docs site. Internal, admin, and PHI surfaces stay OUT by construction, so there is no blueprint-exposure risk from a forgotten flag: the default is deny. The public arrays below are UD-8-gated and intentionally EMPTY: no service surface is published until UD-8 approves the final public list. Widen ONLY by adding a service key to http.public or events.public after that decision. Candidate keys are the backend service directory names (for AsyncAPI) and the OpenAPI info.title slug (for HTTP), e.g. tenancy-core-service.",
+  "note": "DENY-BY-DEFAULT public API docs tiering (ADR-0262, V12-GA-SURFACE-API-DOCS). Any service surface NOT explicitly listed under an http.public or events.public allowlist is INTERNAL and is NEVER published to the public docs site. Internal, admin, and PHI surfaces stay OUT by construction, so there is no blueprint-exposure risk from a forgotten flag: the default is deny. UD-8 APPROVED (2026-07-17) the neutral GA public surface below, least-privilege: the public HTTP surface is party-core-service ONLY (/parties), and the public event surface is party-core-service plus tenancy-core-service (curaos.core.party.* and curaos.core.tenancy.tenant.*). Every healthstack/PHI service, identity/auth internal, and every admin/ops/break-glass surface is intentionally EXCLUDED and remains denied by construction. Widen ONLY by adding a service key here after an explicit approval decision. Candidate keys are the backend service directory names.",
   "defaultTier": "internal",
   "http": {
-    "public": []
+    "public": ["party-core-service"]
   },
   "events": {
-    "public": []
+    "public": ["tenancy-core-service", "party-core-service"]
   },
   "_ud8_candidates": {
-    "_note": "Non-active. Reference-only starter set for the UD-8 decision. Nothing here is published; a key must be moved into http.public / events.public to expose it. Health and status probes are the least sensitive candidates.",
+    "_note": "Non-active. Reference-only starter set that informed the UD-8 decision. The active allowlist is http.public / events.public above.",
     "http": ["tenancy-core-service", "party-core-service"],
     "events": ["tenancy-core-service"]
   }

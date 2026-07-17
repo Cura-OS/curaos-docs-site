@@ -1,8 +1,8 @@
 # API reference
 
 CuraOS exposes its capabilities through an API gateway in front of the backend
-services. In the live reference deployment the gateway is at
-`https://api.abualruz.com`, and it routes to each service by a path prefix.
+services. The gateway is reached at your deployment host (`https://<your-host>`),
+and it routes to each published service by a path prefix.
 
 !!! note "Event-led first"
     CuraOS is event-led: durable, versioned events are the primary cross-service
@@ -16,13 +16,13 @@ services. In the live reference deployment the gateway is at
 Each public domain lives under a versioned gateway path. The shape is:
 
 ```
-https://api.abualruz.com/api/v1/<domain>/<resource>
+https://<your-host>/api/v1/<domain>/<resource>
 ```
 
-For example, the identity service health check:
+For example, the party service health check:
 
 ```bash
-curl -i https://api.abualruz.com/api/v1/identity/healthz
+curl -i https://<your-host>/api/v1/party/healthz
 # HTTP/2 200
 ```
 
@@ -36,47 +36,37 @@ Code with PKCE flow. Acquire a token through the OIDC flow (see
 [Auth setup](../auth/index.md)), then send it on each request:
 
 ```bash
-curl https://api.abualruz.com/api/v1/tenancy \
+curl https://<your-host>/api/v1/party \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
 
 Tokens are scoped per tenant and per role. RBAC (with optional ABAC) governs
 what a token may do.
 
-## The service catalog
+## The public surface
 
-The current local reference stack runs 38 routed backend services behind the
-gateway and exposes 83 gateway domains. The source of truth is generated from
-`DOMAIN_ROUTE_MAP` in `tools/codegen/src/api-gateway-emit.ts`; the same map
-emits `ops/dev/local-stack/route-map.txt`, the Kubernetes ingress manifest, and
-the route-contract checker. They group as follows.
-
-### Neutral core
-
-Vertical-agnostic capability services, each under its own prefix. Examples:
+The public API reference is deny-by-default: a service surface is documented
+publicly only when it is explicitly approved. Anything outside the public tier
+is internal by construction and is not published here. The current public
+neutral-core surface is:
 
 | Prefix | Capability |
 | --- | --- |
-| `/api/v1/identity` | Authentication subjects, sessions, credentials |
-| `/api/v1/tenancy` | Tenants, organizations, isolation boundaries |
-| `/api/v1/audit` | Tamper-evident audit trail |
-| `/api/v1/notify` | Notifications across channels |
-| `/api/v1/storage` | Object and file storage references |
-| `/api/v1/calendar` | Scheduling and calendars |
-| `/api/v1/personal-tasks` | Work items and task management |
-| `/api/v1/commerce` | Commerce primitives |
+| `/api/v1/party` | People and organizations modelled as parties |
 
-(The full set covers settings, reports, geospatial, fleet, sales, procurement,
-inventory, HR, CRM, accounting, e-sign, donation, event, integrations, and site.)
-The complete, grouped list of every service and its prefix is in the
-[Services catalogue](../services/index.md).
+Tenancy is published as a public event namespace (`curaos.core.tenancy.tenant.*`),
+not as a public HTTP surface.
+
+The naming and layering of the wider service set are described neutrally in the
+[Services catalogue](../services/index.md); overlay and internal surfaces are not
+part of the public reference.
 
 ### Vertical overlays
 
-Overlay services extend the core. The HealthStack overlay adds clinical
-capabilities (patient, encounter, scheduling, clinical documents, orders, lab,
-meds, imaging, claims, consent, interop, terminology, devices, care plans). Its
-PHI stays inside overlay schemas.
+Overlay services (the opt-in Health, Education, and ERP verticals) extend the
+neutral core through documented seams. Overlay surfaces, and any protected data
+they own, stay inside the overlay and are internal; they are not part of the
+public reference.
 
 ### Personal and business variants
 
@@ -92,18 +82,18 @@ deprecation window.
 
 ## Contract sources
 
-The wire contracts live with the services and SDK packages:
+The wire contracts are the source of truth and travel with the services and SDK
+packages:
 
-| Contract surface | Source path | Current count |
-| --- | --- | --- |
-| HTTP TypeSpec | `backend/services/*/specs/*.tsp` | 52 specs |
-| Durable events | `backend/services/*/specs/*.asyncapi.yaml` | 50 specs |
-| Generated SDK clients | `backend/packages/*-sdk/openapi-ts.config.ts` | 12 SDK configs |
+| Contract surface | Description |
+| --- | --- |
+| HTTP | TypeSpec / OpenAPI describes the HTTP surface |
+| Durable events | AsyncAPI describes the durable event schemas |
+| Generated SDK clients | Typed clients are generated from the published HTTP contracts |
 
-`DOMAIN_ROUTE_MAP` in `tools/codegen/src/api-gateway-emit.ts` is the gateway
-routing source of truth. It emits the local route map, Kubernetes ingress
-rules, and route-contract checks, so docs, gateway paths, and generated clients
-stay aligned.
+Gateway routing, ingress rules, and route-contract checks are generated from a
+single source of truth, so the docs, the gateway paths, and the generated
+clients stay aligned.
 
 ## Generated reference
 

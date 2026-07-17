@@ -1,6 +1,6 @@
 # Integration
 
-CuraOS is event-led: durable messaging is the primary integration path, and
+CuraOS is event-led: durable eventing is the primary integration path, and
 versioned synchronous APIs are secondary. Integrate through the published
 extension points and data contracts rather than reaching into a service's
 internals.
@@ -41,14 +41,14 @@ A typical integration:
 
 2. **Read or write through the gateway.** Call the relevant domain under its
    versioned API gateway path
-   (`https://api.abualruz.com/api/v1/<domain>/...`) with the bearer token.
+   (`https://api.<your-host>/api/v1/<domain>/...`) with the bearer token.
 
 3. **React to events.** Subscribe to the durable event topics for the domains you
    care about, so your system reacts to changes without polling.
 
 4. **Use the automation core for low-code wiring.** Where you do not want to
    write a service, the automation core provides connectors, actions, and
-   scheduling to wire integrations declaratively.
+   schedules to wire integrations declaratively.
 
 ## Extension points
 

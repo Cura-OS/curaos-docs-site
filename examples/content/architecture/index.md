@@ -9,7 +9,7 @@ they depend **downward** on it.
 ```
   VERTICAL OVERLAYS (opt-in)
   +-------------+  +----------------+  +-----+
-  | HealthStack |  | EducationStack |  | ERP |
+  |   Health    |  |   Education    |  | ERP |
   +------+------+  +-------+--------+  +--+--+
          |                 |             |
          v                 v             v        (dependency: overlay -> core)
@@ -47,7 +47,7 @@ Builder-led
     builder, so behavior is configured, not hand-forked.
 
 Event-led
-:   Durable, versioned messaging is the primary integration path; synchronous
+:   Durable, versioned eventing is the primary integration path; synchronous
     APIs are secondary.
 
 Multi-tenant
@@ -64,7 +64,7 @@ The live reference deployment runs as composable services on Kubernetes:
 - **Runtime**: Kubernetes (k3d in the reference), one workload per service.
 - **Data**: PostgreSQL managed by the CloudNativePG (CNPG) operator, one
   database per tenant. Valkey for caching and ephemeral state.
-- **Messaging**: durable, versioned events as the primary cross-service contract
+- **Eventing**: durable, versioned events as the primary cross-service contract
   (outbox pattern, stable topic naming).
 - **API**: a gateway in front of the services, routing by path prefix.
 - **Identity**: Pocket-ID as the OIDC provider (Authorization Code with PKCE).
@@ -88,7 +88,7 @@ CuraOS publishes its seams and treats them as contracts:
 - Observability is default-on: tracing, structured logs, and metrics, with
   tenant-aware dashboards.
 - Security is defense in depth: strong auth (OIDC + PKCE), RBAC with optional
-  ABAC, tamper-evident audit, and a logged break-glass path.
+  ABAC, tamper-evident audit, and a logged emergency-access path.
 - Privacy and compliance target GDPR and HIPAA, with the PHI/PII boundary
   enforced at both the schema and the service layer.
 

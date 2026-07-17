@@ -10,8 +10,8 @@ CuraOS is a **platform**, not a single application. Three ideas hold it together
 
 1. **Neutral core before vertical.** A generic core provides reusable
    capabilities (identity, tenancy, party, audit, notify, search, storage,
-   calendar, tasks, documents, commerce, and more). Vertical overlays
-   (HealthStack, EducationStack, ERP) extend the core; they never fork it.
+   calendar, tasks, documents, commerce, and more). Opt-in vertical overlays
+   (Health, Education, ERP) extend the core; they never fork it.
 
 2. **Builder-led experiences.** Apps are composed through a workflow/BPM engine
    and an app/site builder. Behavior is configured against documented seams,
@@ -24,18 +24,18 @@ CuraOS is a **platform**, not a single application. Three ideas hold it together
 The dependency direction is always **vertical to neutral, never the reverse**.
 That single invariant is what keeps the core reusable across markets.
 
-## See it running
+## The surfaces
 
-These are live, reachable surfaces. Sign-in is OIDC through Pocket-ID; some
-apps require an account.
+A CuraOS deployment exposes a consistent set of surfaces under your own host.
+Sign-in is OIDC through Pocket-ID; some apps require an account.
 
-| Surface | URL | What it is |
+| Surface | Host pattern | What it is |
 | --- | --- | --- |
-| Admin | `https://admin.abualruz.com` | Tenant and platform administration |
-| Builder | `https://builder.abualruz.com` | App and site builder |
-| Front office | `https://front-office.abualruz.com` | Staff operations desk |
-| API gateway | `https://api.abualruz.com` | Entry point to versioned `/api/v1` domains |
-| Sign in | `https://login.abualruz.com` | Shared OIDC sign-in surface |
+| Admin | `https://admin.<your-host>` | Tenant and platform administration |
+| Builder | `https://builder.<your-host>` | App and site builder |
+| Front office | `https://front-office.<your-host>` | Staff operations desk |
+| API gateway | `https://<your-host>` | Entry point to versioned `/api/v1` domains |
+| Sign in | `https://login.<your-host>` | Shared OIDC sign-in surface |
 
 A full list of every app is in the [Apps guide](../apps/index.md).
 
@@ -47,10 +47,9 @@ any app subdomain above and complete the OIDC sign-in: a successful redirect
 through Pocket-ID and back into a CuraOS session exercises the gateway, the
 identity broker, and the app together.
 
-The current local reference stack routes 38 services through the gateway and
-exposes 83 generated `/api/v1` domains. See the
-[API reference](../api/index.md) for the path convention and the
-[Services catalogue](../services/index.md) for services, ports, and domains.
+Services are reached through the gateway under a versioned `/api/v1/<domain>`
+path. See the [API reference](../api/index.md) for the path convention and the
+[Services catalogue](../services/index.md) for how services are named and layered.
 
 ## Choose your path
 

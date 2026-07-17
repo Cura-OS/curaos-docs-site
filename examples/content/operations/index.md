@@ -9,14 +9,14 @@ Every service exposes an unauthenticated health endpoint, so liveness can be
 probed without a token. Through the gateway:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}\n" https://<host>/api/v1/identity/healthz
-curl -s -o /dev/null -w "%{http_code}\n" https://<host>/api/v1/tenancy/healthz
+curl -s -o /dev/null -w "%{http_code}\n" https://<your-host>/api/v1/party/healthz
+curl -s -o /dev/null -w "%{http_code}\n" https://<your-host>/api/v1/<domain>/healthz
 ```
 
 A `200` means the service is up. Wire these into your uptime checks and the
-ingress readiness probes. If a single service is down (for example `encounter`),
-the rest of the platform keeps serving; the gateway returns an error only for
-routes that need the down service.
+ingress readiness probes. If a single domain service is down, the rest of the
+platform keeps serving; the gateway returns an error only for routes that need
+the down service.
 
 ## Observability
 
@@ -57,7 +57,7 @@ The platform is built to fail safely:
   [Auth setup](../auth/index.md).
 - **Authorization** is RBAC with optional ABAC.
 - **Audit** is tamper-evident; privileged actions follow an approval path.
-- **Break-glass** access is available for emergencies and is always logged with a
+- **Emergency access** is available for emergencies and is always logged with a
   reason, so the exceptional path is still accountable.
 
 ## Upgrades

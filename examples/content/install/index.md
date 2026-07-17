@@ -42,7 +42,7 @@ The reference runtime uses:
 The platform comes up in layers. The neutral core first, then any overlays.
 
 1. **Cluster and operators.** Stand up the cluster, then install the CNPG
-   operator (PostgreSQL) and the messaging operator. These own the stateful
+   operator (PostgreSQL) and the event-broker operator. These own the stateful
    backends every service depends on.
 
 2. **Datastores.** Create the per-tenant PostgreSQL clusters via CNPG and bring
@@ -53,8 +53,8 @@ The platform comes up in layers. The neutral core first, then any overlays.
    tenancy, party, audit, notify, search, storage, and the rest). These have no
    vertical assumptions.
 
-4. **Overlays (opt-in).** Deploy only the overlays a tenant needs: HealthStack,
-   EducationStack, or ERP. Overlays depend downward on the core.
+4. **Overlays (opt-in).** Deploy only the overlays a tenant needs: Health,
+   Education, or ERP. Overlays depend downward on the core.
 
 5. **Frontend apps.** Deploy the app surfaces. Each app is a generated frontend
    wired to the API gateway and to OIDC.
@@ -69,10 +69,10 @@ git clone https://github.com/Cura-Care-Oriented-Stack/curaos
 cd curaos
 
 # Install the umbrella chart (neutral core); add overlays per tenant.
-helm install curaos ./ops/charts/umbrella   # illustrative
+helm install curaos <umbrella-chart>   # illustrative
 
 # Confirm a core service is healthy through the gateway.
-curl -i https://<your-host>/api/v1/identity/healthz
+curl -i https://<your-host>/api/v1/party/healthz
 ```
 
 ## Verifying the install
@@ -80,8 +80,8 @@ curl -i https://<your-host>/api/v1/identity/healthz
 Once the core is up, the unauthenticated health endpoints are the fastest check:
 
 ```bash
-curl -s https://<your-host>/api/v1/identity/healthz   # 200 when identity is up
-curl -s https://<your-host>/api/v1/tenancy/healthz    # 200 when tenancy is up
+curl -s https://<your-host>/api/v1/party/healthz      # 200 when party is up
+curl -s https://<your-host>/api/v1/<domain>/healthz   # 200 when that service is up
 ```
 
 Then open the admin app, sign in through Pocket-ID, and confirm a tenant loads.

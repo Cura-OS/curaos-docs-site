@@ -22,7 +22,7 @@ App / site builder (`builder-core-service`)
     domain contracts become a usable screen without anyone hand-writing it.
 
 Automation core (`automation-core-service`)
-:   Low-code actions, connectors, and scheduling. Where you do not want to write
+:   Low-code actions, connectors, and schedules. Where you do not want to write
     a service, automation wires integrations declaratively: a trigger, a set of
     actions, and a schedule.
 

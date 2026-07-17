@@ -1,20 +1,68 @@
+# Fixture OpenAPI: a faithful mirror of the canonical CuraOS service-core mold
+# (tools/codegen/templates/service-core/specs/*.tsp.hbs) so the generated public
+# reference exercises the real op shape + deny-by-default auth derivation. The
+# real per-service specs live in the workspace (repo-boundary rule); this fixture
+# stands in for one PUBLIC-tier service in the local CI gate. Every op declares a
+# 401 (Unauthorized) - the mold posture - so the derived Auth column is never
+# "Public" here: the whole surface is authenticated by construction.
 openapi: 3.1.0
 info:
   title: public-thing-service
   version: 1.2.0
-  description: Public thing surface, opted into the public tier.
+  description: >-
+    Public thing surface, opted into the public tier. Mirrors the canonical
+    service contract: a liveness probe, a role-gated probe, a demonstration
+    write bound to the JWT principal, and a principal-echo header-trust proof.
+servers:
+  - url: http://localhost:3000
+    description: Local public-thing-service
+  - url: https://{host}/api/v1/public-thing-service
+    description: Gateway
+    variables:
+      host:
+        default: api.abualruz.com
 paths:
   /things/health:
     get:
       operationId: Things_health
-      summary: Liveness probe.
+      summary: Liveness probe (any authenticated principal).
       responses:
         '200':
-          description: ok
-  /things:
+          description: Liveness status.
+        '401':
+          description: Missing or invalid access token.
+  /things/protected:
     get:
-      operationId: Things_list
-      summary: List public things.
+      operationId: Things_protected
+      summary: Role-gated probe (clinician, tenant-admin).
       responses:
         '200':
-          description: ok
+          description: Liveness status for an authorized role.
+        '401':
+          description: Missing or invalid access token.
+        '403':
+          description: Authenticated principal lacks the required role.
+  /things/protected-write:
+    post:
+      operationId: Things_protectedWrite
+      summary: Demonstration write, actor bound to the JWT principal.
+      responses:
+        '200':
+          description: Write acknowledged.
+        '400':
+          description: Invalid request body.
+        '401':
+          description: Missing or invalid access token.
+        '403':
+          description: Authenticated principal lacks the required role.
+  /things/whoami:
+    get:
+      operationId: Things_whoami
+      summary: Principal-echo, returns the JWT-verified actor (header-trust proof).
+      responses:
+        '200':
+          description: The verified principal.
+        '401':
+          description: Missing or invalid access token.
+        '403':
+          description: Authenticated principal lacks the required role.

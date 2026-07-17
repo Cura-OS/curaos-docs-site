@@ -105,20 +105,51 @@ function clean(s: unknown): string {
   return String(s ?? "").replace(/[\u2014\u2013]/g, "-");
 }
 
+// Deny-by-default AUTHENTICATION note (the security posture, distinct from the
+// exposure TIER). Rendered on every generated reference page so an integrator
+// reading any page sees the access gate. It is derived, not asserted: the
+// per-operation `Auth` column below is read from the contract's own declared
+// 401/403 responses (every CuraOS service op declares them - see the canonical
+// service-core `.tsp` mold), and the RolesGuard is deny-by-default platform-wide.
+// ASCII only (the no-em-dash gate scans this staged content).
+const AUTH_NOTE = [
+  '!!! warning "Deny-by-default authentication"',
+  "    Every published operation requires a valid OIDC bearer access token",
+  "    unless its `Auth` column reads `Public`. Authorization is deny-by-default:",
+  "    a principal holds only the roles explicitly granted to it, and any service",
+  "    surface outside the public tier is internal and is never published here.",
+  "    Obtain a token with the OIDC Authorization Code + PKCE flow (see the Auth",
+  "    setup page) and send it as `Authorization: Bearer <token>`.",
+].join("\n");
+
+// Auth requirement for one operation, DERIVED from its declared error responses:
+// a 403 means the op is role-gated, a 401 means a token is required, and an op
+// that declares neither is an unauthenticated probe. This mirrors the canonical
+// service contract, where health/protected/whoami all return `Unauthorized`.
+export function authForOp(op: any): string {
+  const responses = op?.responses ?? {};
+  if ("403" in responses) return "Bearer + role";
+  if ("401" in responses) return "Bearer";
+  return "Public";
+}
+
 export function renderOpenApi(doc: any): string {
   const info = doc?.info ?? {};
   const lines = [`# ${clean(info.title) || "HTTP API"}`, ""];
   if (info.version) lines.push(`Version: \`${clean(info.version)}\``, "");
+  const servers = Array.isArray(doc?.servers) ? doc.servers : [];
+  const gateway = servers.find((s: any) => /\/api\/v\d/.test(String(s?.url ?? ""))) ?? servers[0];
+  if (gateway?.url) lines.push(`Gateway base path: \`${clean(gateway.url)}\``, "");
   if (info.description) lines.push(clean(info.description), "");
-  lines.push("## Operations", "");
+  lines.push(AUTH_NOTE, "", "## Operations", "");
   const paths = doc?.paths ?? {};
-  const rows: string[] = ["| Method | Path | Operation | Summary |", "| --- | --- | --- | --- |"];
+  const rows: string[] = ["| Method | Path | Operation | Auth | Summary |", "| --- | --- | --- | --- | --- |"];
   for (const [path, item] of Object.entries<any>(paths)) {
     for (const method of ["get", "post", "put", "patch", "delete", "options", "head"]) {
       const op = item?.[method];
       if (!op) continue;
       const summary = clean(op.summary || op.description || "").split("\n")[0];
-      rows.push(`| ${method.toUpperCase()} | \`${clean(path)}\` | \`${clean(op.operationId) || "-"}\` | ${summary} |`);
+      rows.push(`| ${method.toUpperCase()} | \`${clean(path)}\` | \`${clean(op.operationId) || "-"}\` | ${authForOp(op)} | ${summary} |`);
     }
   }
   lines.push(rows.length > 2 ? rows.join("\n") : "_No operations._", "");
@@ -130,7 +161,7 @@ export function renderAsyncApi(doc: any): string {
   const lines = [`# ${clean(info.title) || "Event contract"}`, ""];
   if (info.version) lines.push(`Version: \`${clean(info.version)}\``, "");
   if (info.description) lines.push(clean(info.description), "");
-  lines.push("## Channels", "");
+  lines.push(AUTH_NOTE, "", "## Channels", "");
   const channels = doc?.channels ?? {};
   const rows: string[] = ["| Channel | Address | Messages |", "| --- | --- | --- |"];
   for (const [name, ch] of Object.entries<any>(channels)) {
@@ -149,6 +180,8 @@ function indexPage(kind: "http" | "events", version: string, published: Discover
   lines.push(
     "Generated from the services' " + (kind === "http" ? "OpenAPI" : "AsyncAPI") + " specs.",
     "DENY-BY-DEFAULT: only surfaces in the public tier of `config/api-tiers.json` appear here.",
+    "",
+    AUTH_NOTE,
     ""
   );
   if (published.length === 0) {
@@ -197,7 +230,7 @@ export function listVersions(names: string[]): string[] {
 // is emitted, so retention is a build-input, not a code change.
 export function switcherPage(kind: "http" | "events", versions: string[]): string {
   const title = kind === "http" ? "HTTP API reference" : "Event contracts";
-  const lines = [`# ${title}`, "", "Select an API version:", ""];
+  const lines = [`# ${title}`, "", AUTH_NOTE, "", "Select an API version:", ""];
   if (versions.length === 0) {
     lines.push("_No versions published yet._", "");
     return lines.join("\n") + "\n";
@@ -217,6 +250,8 @@ function topIndexPage(): string {
     "Versioned, generated from the CuraOS contract pipeline (TypeSpec -> OpenAPI /",
     "AsyncAPI). Reference surfaces are DENY-BY-DEFAULT: a service appears only when",
     "its key is in the public tier of `config/api-tiers.json`.",
+    "",
+    AUTH_NOTE,
     "",
     "- [HTTP API reference](api/index.md)",
     "- [Event contracts](events/index.md)",

@@ -62,7 +62,15 @@ function fontFaces(): string {
   ].join("\n");
 }
 
-/** Map the palette + ladders onto a single :root token block (light + dark). */
+/**
+ * Map the palette + ladders onto a single :root token block. Colors use
+ * `light-dark()` (exactly two color args, valid); the two shadow tokens do
+ * NOT - `light-dark()` cannot hold a multi-layer (comma-separated) box-shadow
+ * value, so wrapping one produces invalid CSS the browser drops (UIGEN-52 /
+ * ADR-0277). Shadows emit the light value here; the dark override lives in
+ * the `[data-md-color-scheme="slate"]` block in materialBridge(), the same
+ * selector this repo already uses for its light-vs-dark theme mechanism.
+ */
 function tokenRoot(p: Palette): string {
   return `:root{
   color-scheme:light dark;
@@ -88,8 +96,8 @@ function tokenRoot(p: Palette): string {
   --radius-md:${RADIUS.md}px;
   --radius-lg:${RADIUS.lg}px;
   --radius-xl:${RADIUS.xl}px;
-  --shadow-card:light-dark(${ELEVATION.card.light},${ELEVATION.card.dark});
-  --shadow-raised:light-dark(${ELEVATION.raised.light},${ELEVATION.raised.dark});
+  --shadow-card:${ELEVATION.card.light};
+  --shadow-raised:${ELEVATION.raised.light};
   --motion-fast:${MOTION.fast};
   --motion-base:${MOTION.base};
   --motion-slow:${MOTION.slow};
@@ -133,6 +141,8 @@ function materialBridge(): string {
 }
 [data-md-color-scheme="slate"]{
   color-scheme:dark;
+  --shadow-card:${ELEVATION.card.dark};
+  --shadow-raised:${ELEVATION.raised.dark};
   --md-primary-fg-color:var(--c-primary);
   --md-primary-fg-color--light:var(--c-primary-hover);
   --md-primary-fg-color--dark:var(--c-primary-hover);

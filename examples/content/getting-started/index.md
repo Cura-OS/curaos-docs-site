@@ -45,7 +45,7 @@ The API gateway routes to each service under a path prefix, and the apps reach i
 over the same host. The fastest confirmation that the platform is up is to open
 any app subdomain above and complete the OIDC sign-in: a successful redirect
 through Pocket-ID and back into a CuraOS session exercises the gateway, the
-identity broker, and the app together.
+identity broker, and the app together. The current local reference stack routes 71 services through the gateway and exposes 137 generated `/api/v1` domains.
 
 Services are reached through the gateway under a versioned `/api/v1/<domain>`
 path. See the [API reference](../api/index.md) for the path convention and the

@@ -19,11 +19,15 @@ NAME="$(parse_flag name "$@")"; NAME="${NAME:-API}"
 
 # Fixture fallback: when no entry is supplied, document the in-repo example TS so
 # the generator is exercisable standalone in the local gate.
+#
+# Default OUTSIDE .build-workspace: build-external.sh wipes .build-workspace at
+# the start of its run (same reason public-api-docs.ts defaults to .build-ref),
+# so the generated API Markdown must be staged from a sibling that survives.
 if [[ -z "$ENTRY" ]]; then
   info "no --entry supplied; using in-repo examples/api-fixture"
   ENTRY="${REPO_ROOT}/examples/api-fixture/index.ts"
   TSCONFIG="${TSCONFIG:-${REPO_ROOT}/examples/api-fixture/tsconfig.json}"
-  OUT_DIR="${OUT_DIR:-${REPO_ROOT}/.build-workspace/api}"
+  OUT_DIR="${OUT_DIR:-${REPO_ROOT}/.build-ref/api}"
 fi
 [[ -n "$OUT_DIR" ]] || die "--out is required"
 [[ -f "$ENTRY" ]] || die "entry not found: $ENTRY"
@@ -39,6 +43,14 @@ ARGS=(
   --out "$OUT_DIR"
   --name "$NAME"
   --readme none
+  # typedoc-plugin-markdown defaults the root/module index page to README.md
+  # (repo-browsing convention); its own docs call out "index" as the fit for
+  # static site generators. Setting it here, instead of renaming README.md to
+  # index.md after the fact, keeps every internal cross-reference link TypeDoc
+  # emits (e.g. functions/*.md linking back to the module index) pointing at
+  # the same file that lands on disk, so MkDocs strict-mode link checking
+  # does not fail on a stale "../README.md" reference.
+  --entryFileName index
   --hideGenerator
   --gitRevision main
 )
@@ -46,11 +58,6 @@ ARGS=(
 
 "$TYPEDOC_BIN" "${ARGS[@]}"
 
-# typedoc-plugin-markdown emits an index named README.md by default; rename to
-# index.md so it slots under the MkDocs `api/` nav anchor.
-if [[ -f "${OUT_DIR}/README.md" && ! -f "${OUT_DIR}/index.md" ]]; then
-  mv "${OUT_DIR}/README.md" "${OUT_DIR}/index.md"
-fi
 [[ -f "${OUT_DIR}/index.md" ]] || die "TypeDoc produced no Markdown index in $OUT_DIR"
 info "API Markdown: $OUT_DIR"
 printf '\nbuild-api-docs: PASS\n'

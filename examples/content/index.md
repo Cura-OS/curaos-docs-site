@@ -4,7 +4,10 @@
 # Material grid-cards. Authored COPY lives here in front matter so the layout +
 # inline-SVG art stay generated while the words stay in content.
 template: home.html
-title: CuraOS Documentation
+# No explicit title: Material's htmltitle block checks page.meta.title first
+# regardless of is_homepage, so setting it here duplicated site_name into
+# "CuraOS Documentation - CuraOS Documentation". Omitted, the homepage falls
+# through to the plain site_name title.
 # The landing is full-bleed: hide the left nav tree + right TOC so the hero and
 # generated sections own the full content width (Material reads `hide`).
 hide:

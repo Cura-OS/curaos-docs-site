@@ -15,7 +15,10 @@ API_ENTRY="$(parse_flag api-entry "$@")"
 API_OUT="$(parse_flag api-out "$@")"
 
 log "A: API docs (TypeDoc → Markdown)"
-API_STAGE="${REPO_ROOT}/.build-workspace/api"
+# Outside .build-workspace: build-external.sh wipes that dir at the start of its
+# run (same reason A2's REF_STAGE lives under .build-ref below), so the
+# generated API Markdown must be staged from a sibling that survives.
+API_STAGE="${REPO_ROOT}/.build-ref/api"
 if [[ -n "$API_ENTRY" ]]; then
   bash "${REPO_ROOT}/scripts/build-api-docs.sh" --entry "$API_ENTRY" --out "${API_OUT:-$API_STAGE}"
 else

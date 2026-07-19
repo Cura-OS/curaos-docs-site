@@ -50,7 +50,7 @@ bun scripts/public-api-docs.ts
 
 step "6 external static site (MkDocs Material strict)"
 if command -v mkdocs >/dev/null 2>&1; then
-  bash scripts/build-external.sh --api-dir .build-workspace/api --reference-dir .build-ref/public-api
+  bash scripts/build-external.sh --api-dir .build-ref/api --reference-dir .build-ref/public-api
   MKDOCS_OK=1
 else
   printf 'SKIP: mkdocs, not installed (run: pip install -r requirements.txt)\n'

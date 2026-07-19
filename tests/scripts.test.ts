@@ -119,11 +119,14 @@ describe("scripts/build-all.sh - --api-out is honored without --api-entry", () =
     expect(calls).not.toMatch(/build-api-docs\.sh .*--entry/);
   });
 
-  test("default (no --api-out) routes both sides to the in-repo stage dir", () => {
+  test("default (no --api-out) routes both sides to the .build-ref stage dir", () => {
     const { r, calls } = runWithStubs([]);
     expect(r.status).toBe(0);
-    expect(calls).toMatch(/build-api-docs\.sh .*--out \S*\.build-workspace\/api/);
-    expect(calls).toMatch(/build-external\.sh .*--api-dir \S*\.build-workspace\/api/);
+    // .build-ref, not .build-workspace: build-external.sh wipes .build-workspace
+    // at the start of its run, so the stage dir must live outside it (matches
+    // the A2/REF_STAGE convention it already follows for the public reference).
+    expect(calls).toMatch(/build-api-docs\.sh .*--out \S*\.build-ref\/api/);
+    expect(calls).toMatch(/build-external\.sh .*--api-dir \S*\.build-ref\/api/);
   });
 });
 

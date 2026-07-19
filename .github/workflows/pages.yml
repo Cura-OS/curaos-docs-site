@@ -61,7 +61,7 @@ jobs:
           # the workspace repo and is staged by the parent workspace for the
           # primary (NGINX/Zarf) builds.
           bun run build:api
-          bash scripts/build-external.sh --api-dir .build-workspace/api
+          bash scripts/build-external.sh --api-dir .build-ref/api
           bash scripts/offline-smoke.sh
 
       - name: Configure Pages

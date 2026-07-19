@@ -37,6 +37,7 @@ import {
   ICON_PATHS,
   BRAND_MARK_PATHS,
   SVG_FONT,
+  BREAKPOINT_MD_REM,
 } from "../design-tokens.ts";
 
 /** Emit a `light-dark()` value from a ColorStop-bearing palette key. */
@@ -283,7 +284,7 @@ a:focus-visible,.md-typeset .md-button:focus-visible,.md-nav__link:focus-visible
 
 /* Honesty strip: shipped vs roadmap, two tinted panels, semantic dots. */
 .home-status{display:grid;gap:1px;grid-template-columns:1fr 1fr;background:var(--c-border);border:1px solid var(--c-border);border-radius:var(--radius-lg);overflow:hidden}
-@media (max-width:48rem){.home-status{grid-template-columns:1fr}}
+@media (max-width:${BREAKPOINT_MD_REM}){.home-status{grid-template-columns:1fr}}
 .home-status .col{background:var(--c-surface);padding:1.4rem 1.5rem}
 .home-status .col h3{font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:.5rem;margin:0 0 1rem}
 .home-status .col h3 .dot{width:8px;height:8px;border-radius:50%;flex:none}

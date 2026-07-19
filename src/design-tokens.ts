@@ -1,17 +1,32 @@
-// design-tokens.ts: the SHARED CuraOS design-token source.
+// design-tokens.ts: the docs-site's ATLAS override layer on @curaos/design-
+// tokens (UIGEN-27, ADR-0277).
 //
-// This is the single canonical source of design PRIMITIVES (palette ramps, type
-// scale, motion tokens, radius + elevation ladders, the self-hosted font stack,
-// and the inline-SVG illustration library) that every CuraOS renderer is meant
-// to consume: the docs site (this repo), the marketing site (curaos-website),
-// and the app fleet (ui-app-emit). Renderers import these primitives instead of
-// re-declaring token literals, so a palette or type-scale change lands in ONE
-// place and every surface follows.
+// @curaos/design-tokens (curaos/frontend/packages/design-tokens) is now the
+// single fleet-wide DTCG base token SOURCE (colors, type scale, radius,
+// elevation, motion, spacing, breakpoints, z-index). This file no longer
+// re-derives that catalog from scratch: it depends on the shared package
+// (see package.json) and reads its tokens.json (SHARED_BASE below) as the
+// foundation, then layers docs-specific overrides on top where the docs
+// identity legitimately diverges from the fleet default, per ADR-0277's own
+// scope note (docs-site keeps its "aurora"/"aqua" render pipeline, only the
+// token SOURCE relationship changes; curaos-website is out of scope).
 //
-// The module is intentionally framework-free and zero-dependency: it exports
-// plain data (OKLCH color strings, numeric ladders) plus a couple of pure
-// helpers. It emits NOTHING at import time (no side effects), so a consumer can
-// pick exactly the primitives it needs.
+// Every ladder below (TYPE_SCALE, RADIUS, ELEVATION, MOTION, FONTS, the OKLCH
+// palettes) is a DOCUMENTED OVERRIDE, not an accidental duplicate: the docs
+// site's brand identity (fluid clamp() type on a perceptual OKLCH ramp,
+// self-hosted variable fonts, brand-tinted elevation) is a different design
+// language than the shared package's discrete px/hex scale, by design (see
+// ADR-0277 "Scope note: curaos-website stays HSL, OKLCH deferred"), so the
+// values are kept as-is to hold the site's VR baseline at diff=0. Where a
+// docs value is genuinely IDENTICAL to the shared base (currently: the
+// 48rem/768px breakpoint), it is sourced from SHARED_BASE directly instead of
+// being re-typed as a second literal - see BREAKPOINT_MD_REM below.
+//
+// The module is intentionally framework-free and near-zero-dependency beyond
+// the shared token package: it exports plain data (OKLCH color strings,
+// numeric ladders) plus a couple of pure helpers. It emits NOTHING at import
+// time beyond reading the shared JSON (no writes, no network), so a consumer
+// can pick exactly the primitives it needs.
 //
 // DESIGN LAWS encoded here (so the output passes the "AI made that" test):
 //   - Color is OKLCH, never #000/#fff. Neutrals are TINTED toward the brand hue
@@ -29,6 +44,37 @@
 //     bluish-aqua identity) kept so the same generator can emit BOTH from one
 //     config entry. Adding a third variant = adding one entry to THEME_VARIANTS,
 //     never editing the emitter layout code.
+
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+
+/**
+ * The shared fleet-wide DTCG token base (@curaos/design-tokens/tokens.json).
+ * Resolved via the package's own `exports` map (not a hand-typed relative
+ * path) so this keeps working if the shared package ever moves. Read once at
+ * module load (data only, no side effects).
+ */
+const require_ = createRequire(import.meta.url);
+export const SHARED_BASE = JSON.parse(
+  readFileSync(require_.resolve("@curaos/design-tokens/tokens.json"), "utf8"),
+) as {
+  breakpoint: Record<string, { $value: string }>;
+};
+
+function pxToRem(px: string): string {
+  const n = Number(px.replace(/px$/, ""));
+  return `${n / 16}rem`;
+}
+
+/**
+ * The one breakpoint where the docs site's pre-existing literal (48rem) is
+ * byte-identical to the shared base (breakpoint.md = 768px = 48rem @ the
+ * standard 16px root), so it is sourced from SHARED_BASE instead of kept as a
+ * second hand-typed literal. The docs-only 60rem breakpoint (src/theme/emit.ts)
+ * has no shared-scale equivalent (the fleet ladder jumps 768px -> 1024px) and
+ * stays a documented docs-specific value.
+ */
+export const BREAKPOINT_MD_REM = pxToRem(SHARED_BASE.breakpoint.md!.$value);
 
 /** An OKLCH-based perceptual color ramp, light + dark anchors per stop. */
 export interface ColorStop {

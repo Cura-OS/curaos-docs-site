@@ -9,6 +9,9 @@
     "node": ">=22.0.0"
   },
   "packageManager": "bun@1.1.42",
+  "dependencies": {
+    "@curaos/design-tokens": "file:../frontend/packages/design-tokens"
+  },
   "scripts": {
     "ci": "bash ci.sh",
     "typecheck": "tsc --noEmit",

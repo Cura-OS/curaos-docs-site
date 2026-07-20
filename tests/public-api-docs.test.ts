@@ -233,4 +233,19 @@ describe("retention window (ADR-0262: current + previous minor)", () => {
     expect(switcher).not.toContain("v1.0");
     rmSync(out, { recursive: true, force: true });
   });
+
+  // Grill PR#1184 P2: a garbled/<1 retain must NEVER wipe the current version.
+  // 0/negative floor to keep=1 (prune all but current); NaN falls back to the
+  // default window. In every case the newest (current) version survives disk.
+  test("retain floor: 0, negative, and NaN never wipe the current version (fail-closed)", () => {
+    for (const bad of [0, -3, Number.NaN]) {
+      rmSync(out, { recursive: true, force: true });
+      for (const v of ["v1.0", "v1.1", "v1.2"]) mkdirSync(join(out, v), { recursive: true });
+      const pruned = pruneOldVersions(out, bad as number);
+      expect(existsSync(join(out, "v1.2"))).toBe(true); // current always survives
+      expect(pruned).not.toContain("v1.2");
+      expect(pruned.length).toBeLessThan(3); // never wipes all three
+    }
+    rmSync(out, { recursive: true, force: true });
+  });
 });

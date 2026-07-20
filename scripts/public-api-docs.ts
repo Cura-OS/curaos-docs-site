@@ -238,7 +238,12 @@ export function listVersions(names: string[]): string[] {
 // the window, instead of accumulating forever. Returns the pruned version
 // names (empty when nothing exceeded the window).
 export function pruneOldVersions(kindRoot: string, retain = RETENTION_WINDOW): string[] {
-  const stale = listVersions(versionDirs(kindRoot)).slice(retain);
+  // Fail-closed floor: a garbled (NaN) or <1 retain would `slice(NaN)`/`slice(0)`
+  // and delete EVERY version incl. the current one, taking the live reference
+  // offline. Guard the primitive so no caller (CLI --retain, generate(), future)
+  // can widen the prune below "keep current".
+  const keep = Number.isFinite(retain) ? Math.max(1, Math.floor(retain)) : RETENTION_WINDOW;
+  const stale = listVersions(versionDirs(kindRoot)).slice(keep);
   for (const v of stale) rmSync(join(kindRoot, v), { recursive: true, force: true });
   return stale;
 }
@@ -356,6 +361,8 @@ function main() {
 
   const apiVersion = flag("api-version", argv) ?? "v1.2";
   const retainFlag = flag("retain", argv);
+  // pruneOldVersions clamps the actual prune (fail-closed floor at 1); pass the
+  // raw parse through.
   const retain = retainFlag ? Number(retainFlag) : RETENTION_WINDOW;
   const cfg = loadTierConfig(configPath);
   const { published, denied, pruned } = generate(specsRoot, outDir, cfg, apiVersion, retain);

@@ -2,7 +2,7 @@
 // NEVER reach generated output, and a garbled/empty allowlist must publish
 // nothing (fail closed).
 import { describe, test, expect } from "bun:test";
-import { readFileSync, existsSync, rmSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync, rmSync, readdirSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import {
   loadTierConfig,
@@ -15,6 +15,8 @@ import {
   generate,
   listVersions,
   switcherPage,
+  pruneOldVersions,
+  RETENTION_WINDOW,
   type TierConfig,
 } from "../scripts/public-api-docs.ts";
 
@@ -176,6 +178,59 @@ describe("generate (end-to-end deny-by-default, versioned)", () => {
     const res = generate(SPECS, out, cfg, V);
     expect(res.published.length).toBe(0);
     expect(res.denied.length).toBe(4);
+    rmSync(out, { recursive: true, force: true });
+  });
+});
+
+describe("retention window (ADR-0262: current + previous minor)", () => {
+  const out = join(import.meta.dir, "_gen-out-retain");
+  const cfg: TierConfig = { defaultTier: "internal", http: { public: [] }, events: { public: [] } };
+
+  test("default window is 2 (current + previous minor)", () => {
+    expect(RETENTION_WINDOW).toBe(2);
+  });
+
+  test("pruneOldVersions deletes everything past the window, newest first", () => {
+    rmSync(out, { recursive: true, force: true });
+    for (const v of ["v1.0", "v1.1", "v1.2"]) mkdirSync(join(out, v), { recursive: true });
+    const pruned = pruneOldVersions(out, 2);
+    expect(pruned).toEqual(["v1.0"]);
+    expect(existsSync(join(out, "v1.0"))).toBe(false);
+    expect(existsSync(join(out, "v1.1"))).toBe(true);
+    expect(existsSync(join(out, "v1.2"))).toBe(true);
+    rmSync(out, { recursive: true, force: true });
+  });
+
+  test("generate() prunes stale versions from disk once a third minor lands", () => {
+    rmSync(out, { recursive: true, force: true });
+    generate(SPECS, out, cfg, "v1.0");
+    generate(SPECS, out, cfg, "v1.1");
+    const res = generate(SPECS, out, cfg, "v1.2"); // default retain = 2 -> v1.0 falls out of window
+
+    expect(res.pruned).toEqual(["v1.0"]);
+    expect(existsSync(join(out, "api", "v1.0"))).toBe(false);
+    expect(existsSync(join(out, "events", "v1.0"))).toBe(false);
+    expect(existsSync(join(out, "api", "v1.1"))).toBe(true);
+    expect(existsSync(join(out, "api", "v1.2"))).toBe(true);
+
+    // Switcher reflects exactly the retained window: current + previous minor.
+    const switcher = readFileSync(join(out, "api", "index.md"), "utf8");
+    expect(switcher).not.toContain("v1.0");
+    expect(switcher).toContain("[v1.2 (current)](v1.2/index.md)");
+    expect(switcher).toContain("[v1.1](v1.1/index.md)");
+    rmSync(out, { recursive: true, force: true });
+  });
+
+  test("retain is configurable: a window of 1 keeps only the current version", () => {
+    rmSync(out, { recursive: true, force: true });
+    generate(SPECS, out, cfg, "v1.0", 1);
+    const res = generate(SPECS, out, cfg, "v1.1", 1);
+    expect(res.pruned).toEqual(["v1.0"]);
+    expect(existsSync(join(out, "api", "v1.0"))).toBe(false);
+    expect(existsSync(join(out, "api", "v1.1"))).toBe(true);
+    const switcher = readFileSync(join(out, "api", "index.md"), "utf8");
+    expect(switcher).toContain("[v1.1 (current)](v1.1/index.md)");
+    expect(switcher).not.toContain("v1.0");
     rmSync(out, { recursive: true, force: true });
   });
 });

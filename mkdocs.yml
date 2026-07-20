@@ -118,7 +118,9 @@ nav:
       - Event contracts: events/index.md
       # Generated, versioned, deny-by-default reference (public-api-docs.ts).
       # Entry page links into api/ + events/ version switchers; per-version and
-      # per-service pages are discovered via those links (empty until UD-8).
+      # per-service pages are discovered via those links. UD-8-approved surface:
+      # party-core-service (HTTP); party-core + tenancy-core (events); switcher
+      # window = current + previous minor (ADR-0262 retention).
       - API & event reference (generated): reference/index.md
       - Auth setup: auth/index.md
   - Operate:

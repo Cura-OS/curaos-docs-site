@@ -5,9 +5,13 @@
 // is an ALLOWLIST: a service surface is published ONLY if its key appears in
 // http.public (OpenAPI) or events.public (AsyncAPI). Anything else -- every
 // internal, admin, and PHI surface -- is denied by construction, so a forgotten
-// flag never leaks a blueprint. The public arrays are UD-8-gated (see the config
-// note); the deny-default FRAMEWORK ships now, the final public list lands with
-// UD-8.
+// flag never leaks a blueprint. UD-8 (2026-07-17) approved the neutral GA public
+// surface shipped in config/api-tiers.json.
+//
+// Retention (ADR-0262 proposal, UD-8-gated question 2): "current + previous
+// minor". RETENTION_WINDOW below enforces it by pruning older version
+// directories at build time so the switcher, and disk, never accumulate every
+// version ever generated.
 //
 // Repo-boundary rule: specs live in the workspace, NOT this repo. The caller
 // passes --specs-root; we never hardcode a workspace path. With no --specs-root
@@ -18,7 +22,7 @@
 // build-external.sh stages it alongside the TypeDoc api/ output for MkDocs.
 //
 // Usage:
-//   bun scripts/public-api-docs.ts [--specs-root DIR] [--out DIR] [--config PATH]
+//   bun scripts/public-api-docs.ts [--specs-root DIR] [--out DIR] [--config PATH] [--retain N]
 import { parse as parseYaml } from "yaml";
 import { readdirSync, statSync, readFileSync, existsSync, rmSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, dirname, basename } from "node:path";
@@ -41,7 +45,11 @@ export interface DiscoveredSpec {
 export interface GenResult {
   published: DiscoveredSpec[];
   denied: DiscoveredSpec[];
+  pruned: string[];
 }
+
+// ADR-0262 retention proposal: current + previous minor = 2 versions retained.
+export const RETENTION_WINDOW = 2;
 
 export function loadTierConfig(path: string): TierConfig {
   const raw = JSON.parse(readFileSync(path, "utf8"));
@@ -224,6 +232,17 @@ export function listVersions(names: string[]): string[] {
   });
 }
 
+// Delete every version dir under kindRoot beyond the retention window (newest
+// `retain` kept, per listVersions ordering). Runs at build time so a stale
+// version's service pages stop shipping once a newer minor pushes it out of
+// the window, instead of accumulating forever. Returns the pruned version
+// names (empty when nothing exceeded the window).
+export function pruneOldVersions(kindRoot: string, retain = RETENTION_WINDOW): string[] {
+  const stale = listVersions(versionDirs(kindRoot)).slice(retain);
+  for (const v of stale) rmSync(join(kindRoot, v), { recursive: true, force: true });
+  return stale;
+}
+
 // Version switcher (lives at <kind>/index.md): the real "version switcher"
 // deliverable. It links to every published API version present on disk. How MANY
 // versions are retained is the UD-8 retention pick; the switcher covers whatever
@@ -264,6 +283,7 @@ export function generate(
   outDir: string,
   cfg: TierConfig,
   apiVersion = "v1.2",
+  retain = RETENTION_WINDOW,
 ): GenResult {
   const specs = discoverSpecs(specsRoot);
   const published: DiscoveredSpec[] = [];
@@ -297,12 +317,17 @@ export function generate(
     join(outDir, "events", apiVersion, "index.md"),
     indexPage("events", apiVersion, published.filter((s) => s.kind === "events")),
   );
+  // Retention (ADR-0262: current + previous minor) BEFORE rebuilding the
+  // switchers, so a pruned version never appears in the page that lists them.
+  const prunedHttp = pruneOldVersions(join(outDir, "api"), retain);
+  const prunedEvents = pruneOldVersions(join(outDir, "events"), retain);
+  const pruned = [...new Set([...prunedHttp, ...prunedEvents])];
   // Rebuild the switchers by scanning every version dir present (this build's +
-  // any prior versions kept in outDir).
+  // any prior versions kept in outDir, minus whatever retention just pruned).
   writeFileSync(join(outDir, "api", "index.md"), switcherPage("http", listVersions(versionDirs(join(outDir, "api")))));
   writeFileSync(join(outDir, "events", "index.md"), switcherPage("events", listVersions(versionDirs(join(outDir, "events")))));
   writeFileSync(join(outDir, "index.md"), topIndexPage());
-  return { published, denied };
+  return { published, denied, pruned };
 }
 
 function flag(name: string, argv: string[]): string | undefined {
@@ -330,14 +355,18 @@ function main() {
       : join(REPO_ROOT, "config", "api-tiers.json"));
 
   const apiVersion = flag("api-version", argv) ?? "v1.2";
+  const retainFlag = flag("retain", argv);
+  const retain = retainFlag ? Number(retainFlag) : RETENTION_WINDOW;
   const cfg = loadTierConfig(configPath);
-  const { published, denied } = generate(specsRoot, outDir, cfg, apiVersion);
+  const { published, denied, pruned } = generate(specsRoot, outDir, cfg, apiVersion, retain);
   console.error(`config: ${configPath}`);
   console.error(`api version: ${apiVersion}`);
   console.error(`published (public tier): ${published.length} -> ${outDir}`);
   for (const s of published) console.error(`  PUBLISH ${s.kind} ${s.key}`);
   console.error(`denied (deny-by-default): ${denied.length}`);
   for (const s of denied) console.error(`  DENY    ${s.kind} ${s.key}`);
+  console.error(`retention window: ${retain} (current + previous minor); pruned ${pruned.length} old version(s)`);
+  for (const v of pruned) console.error(`  PRUNE   ${v}`);
   console.log("public-api-docs: PASS");
 }
 

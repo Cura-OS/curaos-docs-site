@@ -43,9 +43,11 @@ step "5 API docs (TypeDoc → Markdown)"
 bash scripts/build-api-docs.sh
 
 step "5b public API docs (OpenAPI + AsyncAPI, DENY-BY-DEFAULT tiering)"
-# Exercises the deny-by-default framework against the in-repo fixture: the
-# public-tier surface is emitted, the internal surface is denied. The real
-# public list is UD-8-gated (config/api-tiers.json publishes nothing yet).
+# Exercises the deny-by-default framework against the in-repo fixture (no
+# --specs-root here, so this step never touches config/api-tiers.json). A real
+# build passes --specs-root plus --config config/api-tiers.json to publish the
+# UD-8-approved surface (party-core-service HTTP; party-core + tenancy-core
+# events), windowed to the current + previous minor retention (--retain).
 bun scripts/public-api-docs.ts
 
 step "6 external static site (MkDocs Material strict)"

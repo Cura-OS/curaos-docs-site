@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ci.sh: local CI gate for curaos-docs-site (default merge gate).
 #
-# A green run here is the merge authority (GitHub auto-CI is workflow_dispatch-
-# only). Mirrors the step order a reactivated GitHub Actions run would use.
+# A green run here is the merge authority. GitHub Actions runs this same gate on
+# pull requests and main updates, mirroring the local step order.
 #
 # Steps:
 #   1 install (bun, frozen lockfile)

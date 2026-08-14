@@ -39,7 +39,12 @@ theme:
   # (de-tealed indigo-violet + warm coral, OKLCH) is layered on via extra_css.
   font: false
   features:
-    - navigation.instant
+    # navigation.instant (SPA-style loads) is intentionally omitted: it is
+    # incompatible with the mkdocs-static-i18n per-page contextual language
+    # switcher (the switcher rewrites the alternate-language link per page at
+    # build time, which instant navigation cannot re-apply after a soft swap).
+    # Dropping it lets the switcher point at the current page's translation and
+    # keeps the --strict build warning-free.
     - navigation.tracking
     - navigation.sections
     - navigation.top
@@ -80,7 +85,28 @@ extra_css:
 plugins:
   # Client-side lunr.js search index; works fully offline when the static
   # output is served over HTTP (NGINX/Caddy/Zarf air-gap). No network egress.
+  # Declared before i18n so the i18n plugin can re-wrap it into a per-locale
+  # index (each built language gets its own offline search).
   - search
+  # MkDocs-native per-locale static i18n. Suffix structure: the default-locale
+  # page is the plain file (index.md) and a translation is a sibling with the
+  # locale suffix (index.ar.md); untranslated pages fall back to the default, so
+  # the whole site builds even with only a scaffold translation present. Emits a
+  # header language switcher and a per-locale /ar/ tree from the same bundled
+  # Material assets: no CDN egress, so the zero-egress air-gap render still holds.
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: ar
+          name: "العربية"
+          build: true
+          # Arabic is RTL; Material renders the /ar/ build right-to-left because
+          # the i18n plugin sets theme.language: ar for that locale.
 
 markdown_extensions:
   - admonition

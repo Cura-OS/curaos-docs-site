@@ -2,3 +2,7 @@
 # Exact pins per the CuraOS version-pinning policy; Renovate keeps them fresh.
 mkdocs==1.6.1
 mkdocs-material==9.7.6
+# MkDocs-native per-locale static i18n (default + alternate locale builds, header
+# language switcher). No CDN egress: it only emits per-language HTML from the same
+# bundled Material assets, so the zero-egress air-gap render still holds.
+mkdocs-static-i18n==1.3.1

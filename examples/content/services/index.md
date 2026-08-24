@@ -4,7 +4,7 @@ CuraOS is composed of many small services rather than one monolith. Each service
 owns one capability, ships independently, and is reachable through the API
 gateway under a stable, versioned path prefix. This page explains how services
 are named and layered, and documents the surfaces that are part of the public
-API reference. The current reference deployment routes 75 services through the gateway and exposes 147 gateway domains.
+API reference. The current reference deployment routes 75 services through the gateway and exposes 148 gateway domains.
 
 ## Naming convention
 

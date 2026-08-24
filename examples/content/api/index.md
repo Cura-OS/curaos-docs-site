@@ -2,7 +2,7 @@
 
 CuraOS exposes its capabilities through an API gateway in front of the backend
 services. The gateway is reached at your deployment host (`https://<your-host>`),
-and it routes to each published service by a path prefix. The current reference deployment runs 75 routed backend services behind the gateway and exposes 147 gateway domains.
+and it routes to each published service by a path prefix. The current reference deployment runs 75 routed backend services behind the gateway and exposes 148 gateway domains.
 
 !!! note "Event-led first"
     CuraOS is event-led: durable, versioned events are the primary cross-service

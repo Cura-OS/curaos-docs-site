@@ -20,6 +20,25 @@
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
+# Single source of truth for "can this environment build TechDocs at all". The
+# @techdocs/cli path needs the mkdocs-techdocs-core plugin (pip), and the mkdocs
+# fallback needs the mkdocs binary; the techdocs-core pip package pulls mkdocs in,
+# so either path ultimately requires the python/mkdocs toolchain. npx alone does
+# NOT suffice (that was the ci.sh step-9 bug: it invoked a build that could only
+# die). ci.sh calls `--check` to skip step 9 with notice when absent (mirroring
+# steps 6/7), instead of hard-failing on a runner without the optional toolchain.
+techdocs_core_present() {
+  have python3 && python3 -c "import importlib.util,sys; sys.exit(0 if importlib.util.find_spec('mkdocs_techdocs_core') else 1)" >/dev/null 2>&1
+}
+techdocs_capable() {
+  have mkdocs || { have npx && techdocs_core_present; }
+}
+
+if [[ "${1:-}" == "--check" ]]; then
+  techdocs_capable
+  exit $?
+fi
+
 SERVICE="$(parse_flag service "$@")"
 DOCS_DIR="$(parse_flag docs-dir "$@")"
 OUT_DIR="$(parse_flag out "$@")"
@@ -77,10 +96,8 @@ mkdir -p "$(dirname "$OUT_DIR")"
 # path). Otherwise fall back to a plain `mkdocs build` of the search-only config
 # synthesized above, an equivalent render that exercises the harness in the
 # local gate without the heavier Backstage toolchain. Never `|| true`.
-techdocs_core_present() {
-  have python3 && python3 -c "import importlib.util,sys; sys.exit(0 if importlib.util.find_spec('mkdocs_techdocs_core') else 1)" >/dev/null 2>&1
-}
-
+# (techdocs_core_present / techdocs_capable are defined near the top, so `--check`
+# can probe capability before any workspace synthesis.)
 if have npx && techdocs_core_present && npx --yes @techdocs/cli@1.10.7 --version >/dev/null 2>&1; then
   ( cd "$WS" && npx --yes @techdocs/cli@1.10.7 generate --source-dir . --output-dir "$OUT_DIR" --no-docker )
   info "generated via @techdocs/cli (techdocs-core present)"

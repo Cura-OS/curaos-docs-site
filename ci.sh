@@ -78,10 +78,14 @@ step "8 em/en dash gate (no U+2014 em-dash / U+2013 en-dash in repo OR staged do
 bash scripts/em-dash-gate.sh
 
 step "9 TechDocs harness (per-service)"
-if command -v mkdocs >/dev/null 2>&1 || command -v npx >/dev/null 2>&1; then
+# Gate on ACTUAL capability, not just `npx` presence: @techdocs/cli needs the
+# mkdocs-techdocs-core plugin and the fallback needs mkdocs, so npx alone invokes
+# a build that can only die. build-techdocs.sh --check is the single source of
+# truth; skip-with-notice when absent, consistent with steps 6/7.
+if bash scripts/build-techdocs.sh --check >/dev/null 2>&1; then
   bash scripts/build-techdocs.sh
 else
-  printf 'SKIP: TechDocs, neither mkdocs nor npx available\n'
+  printf 'SKIP: TechDocs, neither mkdocs nor a techdocs-core-enabled @techdocs/cli available (run: pip install -r requirements.txt)\n'
 fi
 
 step "10 bun test (unit + contract)"

@@ -181,3 +181,41 @@ describe("scripts/offline-smoke.sh - rejects remote-CDN output", () => {
     }
   });
 });
+
+describe("scripts/build-techdocs.sh --check - capability preflight (ci.sh step 9 skip contract)", () => {
+  // ci.sh gates step 9 on this preflight so it skips-with-notice (like steps 6/7)
+  // instead of invoking a build that can only die when the mkdocs/techdocs-core
+  // toolchain is absent. The preflight must decide WITHOUT synthesizing a build.
+  test("exits 0 (capable) when mkdocs is on PATH, and builds nothing", () => {
+    const bin = mkdtempSync(join(tmpdir(), "fakebin-"));
+    writeFileSync(join(bin, "mkdocs"), "#!/bin/sh\nexit 0\n", { mode: 0o755 });
+    const stage = join(ROOT, ".build-workspace", "techdocs");
+    const before = existsSync(stage);
+    try {
+      const r = spawnSync("bash", [join(ROOT, "scripts/build-techdocs.sh"), "--check"], {
+        cwd: ROOT,
+        encoding: "utf8",
+        env: { ...process.env, PATH: `${bin}:${process.env.PATH}` },
+      });
+      expect(r.status).toBe(0);
+      // --check must short-circuit before any workspace synthesis.
+      if (!before) expect(existsSync(stage)).toBe(false);
+    } finally {
+      rmSync(bin, { recursive: true, force: true });
+    }
+  });
+
+  test("exits non-zero (incapable) when neither mkdocs nor techdocs-core is available", () => {
+    if (spawnSync("bash", ["-c", "command -v mkdocs"]).status === 0) {
+      console.log("SKIP: host has mkdocs; cannot exercise the incapable branch");
+      return;
+    }
+    const r = spawnSync("bash", [join(ROOT, "scripts/build-techdocs.sh"), "--check"], {
+      cwd: ROOT,
+      encoding: "utf8",
+    });
+    expect(r.status).not.toBe(0);
+    // It refuses via exit code, not a loud die/build attempt.
+    expect(r.stdout).not.toContain("build-techdocs: PASS");
+  });
+});
